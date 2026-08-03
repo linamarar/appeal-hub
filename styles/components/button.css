@@ -109,6 +109,19 @@
   height: var(--control-height-sm);
 }
 
+@media (max-width: 1024px) {
+  .ui-button--icon-only-mobile {
+    gap: 0;
+    width: var(--control-height-md);
+    min-width: var(--control-height-md);
+    padding: 0;
+  }
+
+  .ui-button--icon-only-mobile .ui-button__label {
+    display: none;
+  }
+}
+
 .ui-icon-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
