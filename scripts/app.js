@@ -37,6 +37,13 @@ function renderFlowAppealCard(container, data) {
     </div>`;
 }
 
+const appealsListFilters = {
+  searchQuery: '',
+  statusFilter: '',
+  priorityFilter: '',
+  assigneeFilter: '',
+};
+
 function updateAppealsCount(count) {
   const el = document.getElementById('appeals-count');
   if (el) el.textContent = `Найдено обращений: ${count}`;
@@ -52,11 +59,68 @@ function setListState(state) {
   if (data) data.classList.toggle('is-hidden', state !== 'loaded');
 }
 
+function isAllFilterOption(value) {
+  return !value || /^Все\b/i.test(String(value).trim());
+}
+
+function getSelectFilterValue(select) {
+  if (!select || select.selectedIndex <= 0) return '';
+  const option = select.options[select.selectedIndex];
+  const value = (option?.value || option?.textContent || '').trim();
+  return isAllFilterOption(value) ? '' : value;
+}
+
+function syncAppealsFiltersFromDom() {
+  const search = document.getElementById('appeals-search');
+  const inline = document.querySelector('.appeals-toolbar__inline-filters');
+  appealsListFilters.searchQuery = search?.value || '';
+  appealsListFilters.statusFilter = getSelectFilterValue(inline?.querySelector('[data-filter="status"]'));
+  appealsListFilters.priorityFilter = getSelectFilterValue(inline?.querySelector('[data-filter="priority"]'));
+  appealsListFilters.assigneeFilter = getSelectFilterValue(inline?.querySelector('[data-filter="assignee"]'));
+}
+
+function resolveStatusFilterCode(statusFilter) {
+  if (!statusFilter || typeof APPEAL_STATUSES === 'undefined') return null;
+  const match = Object.values(APPEAL_STATUSES).find((s) => s.label === statusFilter);
+  return match?.code || null;
+}
+
+function filterAppealsList(appeals) {
+  const query = appealsListFilters.searchQuery.trim().toLowerCase();
+  const statusCode = resolveStatusFilterCode(appealsListFilters.statusFilter);
+  const statusLabel = appealsListFilters.statusFilter;
+  const priority = appealsListFilters.priorityFilter;
+  const assignee = appealsListFilters.assigneeFilter;
+
+  return appeals.filter((appeal) => {
+    if (query) {
+      const id = String(appeal.id || '').toLowerCase();
+      const title = String(appeal.title || '').toLowerCase();
+      if (!id.includes(query) && !title.includes(query)) return false;
+    }
+
+    if (statusLabel) {
+      if (statusCode) {
+        if (appeal.statusCode !== statusCode) return false;
+      } else if (appeal.statusLabel !== statusLabel) {
+        return false;
+      }
+    }
+
+    if (priority && appeal.priority !== priority) return false;
+
+    if (assignee === 'Не назначен' && appeal.assigneeId) return false;
+
+    return true;
+  });
+}
+
 function renderTable() {
   const tbody = document.getElementById('appeals-table-body');
   if (!tbody) return;
 
-  const appeals = AppealsService.getList();
+  syncAppealsFiltersFromDom();
+  const appeals = filterAppealsList(AppealsService.getList());
   updateAppealsCount(appeals.length);
   setListState(appeals.length ? 'loaded' : 'empty');
 
@@ -221,6 +285,42 @@ function resetAppealsFilters() {
   document.querySelectorAll('.appeals-toolbar select, #filters-drawer select').forEach((s) => { s.selectedIndex = 0; });
   const search = document.getElementById('appeals-search');
   if (search) search.value = '';
+  appealsListFilters.searchQuery = '';
+  appealsListFilters.statusFilter = '';
+  appealsListFilters.priorityFilter = '';
+  appealsListFilters.assigneeFilter = '';
+  renderTable();
+}
+
+function applyAppealsFiltersFromControls(sourceRoot) {
+  const inlineRoot = document.querySelector('.appeals-toolbar__inline-filters');
+  const drawerBody = document.querySelector('#filters-drawer .ui-drawer__body');
+  if (sourceRoot && inlineRoot && sourceRoot !== inlineRoot) {
+    syncFilterSelects(sourceRoot, inlineRoot);
+  }
+  if (inlineRoot && drawerBody && sourceRoot !== drawerBody) {
+    syncFilterSelects(inlineRoot, drawerBody);
+  }
+  renderTable();
+}
+
+function initAppealsListFilters() {
+  const search = document.getElementById('appeals-search');
+  const inlineRoot = document.querySelector('.appeals-toolbar__inline-filters');
+  const drawerBody = document.querySelector('#filters-drawer .ui-drawer__body');
+
+  search?.addEventListener('input', () => {
+    appealsListFilters.searchQuery = search.value;
+    renderTable();
+  });
+
+  inlineRoot?.querySelectorAll('[data-filter]').forEach((select) => {
+    select.addEventListener('change', () => applyAppealsFiltersFromControls(inlineRoot));
+  });
+
+  drawerBody?.querySelectorAll('[data-filter]').forEach((select) => {
+    select.addEventListener('change', () => applyAppealsFiltersFromControls(drawerBody));
+  });
 }
 
 function initFiltersDrawer() {
@@ -244,15 +344,12 @@ function initFiltersDrawer() {
     drawer.setAttribute('aria-hidden', 'true');
     openBtn.setAttribute('aria-expanded', 'false');
     document.body.classList.remove('ui-drawer-open');
+    renderTable();
   }
 
   openBtn.addEventListener('click', openDrawer);
   drawer.querySelectorAll('[data-drawer-close]').forEach((el) => {
     el.addEventListener('click', closeDrawer);
-  });
-
-  drawerBody.querySelectorAll('[data-filter]').forEach((select) => {
-    select.addEventListener('change', () => syncFilterSelects(drawerBody, inlineRoot));
   });
 
   document.getElementById('filters-drawer-reset')?.addEventListener('click', resetAppealsFilters);
@@ -377,6 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFlow();
   initSidebarToggle();
   initMobileSidebar();
+  initAppealsListFilters();
   initFiltersDrawer();
   initNavigation();
   handleRoute();

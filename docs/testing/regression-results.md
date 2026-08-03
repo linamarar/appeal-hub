@@ -8,12 +8,14 @@
 
 | Результат | Кол-во |
 |---|---|
-| PASS | 48 |
-| FAIL | 9 |
+| PASS | 52 |
+| FAIL | 5 |
 | BLOCKED | 0 |
 | NOT IMPLEMENTED | 4 |
 | NOT APPLICABLE | 1 |
 | **Всего выполнено** | **62** |
+
+Обновление 2026-08-03: DEF-002 исправлен — RT-LIST-05…08 переведены в PASS.
 
 ---
 
@@ -52,10 +54,10 @@
 | RT-LIST-02 | Колонки таблицы | Local | PASS | все ключевые поля рендерятся |
 | RT-LIST-03 | Колонка «Обновлено» = updatedAt | Local | FAIL | DEF-001: выводятся `date`/`time` (createdAt) |
 | RT-LIST-04 | Открытие карточки | Local | PASS | row click + «Открыть» |
-| RT-LIST-05 | Поиск по номеру | Local | FAIL | DEF-002: нет listener/`filter` логики |
-| RT-LIST-06 | Поиск по теме | Local | FAIL | DEF-002 |
-| RT-LIST-07 | Пустой/trim/empty/reset поиска | Local | FAIL | DEF-002: reset только чистит input |
-| RT-LIST-08 | Фильтры статус/приоритет/исполнитель | Local | FAIL | DEF-002: selects не влияют на `renderTable` |
+| RT-LIST-05 | Поиск по номеру | Local+Prod | PASS | DEF-002 FIXED: `filterAppealsList` по id |
+| RT-LIST-06 | Поиск по теме | Local+Prod | PASS | DEF-002 FIXED: поиск по title, case-insensitive |
+| RT-LIST-07 | Пустой/trim/empty/reset поиска | Local+Prod | PASS | DEF-002 FIXED: reset очищает UI+state и перерисовывает |
+| RT-LIST-08 | Фильтры статус/приоритет/исполнитель | Local+Prod | PASS | DEF-002 FIXED: AND по существующим options |
 | RT-LIST-09 | Пагинация | Local | NOT IMPLEMENTED | Статический UI «1 из 1» |
 | RT-LIST-10 | Список после смены статуса (сессия) | Local | PASS | in-memory `saveRecord` + `renderTable` |
 | RT-LIST-11 | Persistence после F5 | Local | FAIL | DEF-003: нет localStorage для appeals |
