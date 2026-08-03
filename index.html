@@ -249,13 +249,13 @@
             </div>
 
             <div class="incoming-preview" id="incoming-preview" hidden>
-              <div class="incoming-preview__doc">
+              <div class="incoming-preview__doc" id="incoming-preview-doc" hidden>
                 <div class="doc-icon">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
                 <div>
-                  <div class="incoming-preview__name">Обращение_№1847.pdf</div>
-                  <div class="incoming-preview__meta">PDF · 2,4 МБ · поступило только что</div>
+                  <div class="incoming-preview__name" id="incoming-preview-name"></div>
+                  <div class="incoming-preview__meta" id="incoming-preview-meta"></div>
                 </div>
               </div>
               <div class="doc-preview">
@@ -355,7 +355,7 @@
 
             <div class="flow-actions">
               <button class="btn btn--secondary" data-go="dashboard">Перейти к списку</button>
-              <button class="btn btn--primary" data-go="appeal-detail">Открыть карточку</button>
+              <button type="button" class="btn btn--primary" id="flow-open-card" disabled>Открыть карточку</button>
             </div>
           </div>
         </section>

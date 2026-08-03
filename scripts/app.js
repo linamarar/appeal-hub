@@ -215,7 +215,7 @@ const flowState = {
   step: 1,
   dirty: false,
   completed: false,
-  selectedFiles: [],
+  selectedFile: null,
   createdAppealId: null,
 };
 
@@ -228,32 +228,65 @@ function markFlowDirty() {
   flowState.completed = false;
 }
 
-function setFlowSelectedFiles(files) {
-  flowState.selectedFiles = files?.length ? Array.from(files) : [];
+function setFlowSelectedFile(file) {
+  flowState.selectedFile = file || null;
+  renderIncomingFilePreview();
 }
 
-function buildFlowAttachmentPayloads(files) {
-  if (!files?.length) return [];
+function formatIncomingPreviewMeta(file) {
+  if (!file) return '';
+  const ext = typeof getFileExtension === 'function' ? getFileExtension(file.name) : '';
+  const typeFromExt = ext ? ext.toUpperCase() : '';
+  const typeFromMime = file.type ? String(file.type).split('/').pop()?.toUpperCase() : '';
+  const type = typeFromExt || typeFromMime || 'FILE';
+  const size = typeof formatFileSize === 'function' ? formatFileSize(file.size || 0) : '';
+  return [type, size, 'поступило только что'].filter(Boolean).join(' · ');
+}
+
+function renderIncomingFilePreview() {
+  const docEl = document.getElementById('incoming-preview-doc');
+  const nameEl = document.getElementById('incoming-preview-name');
+  const metaEl = document.getElementById('incoming-preview-meta');
+  const file = flowState.selectedFile;
+
+  if (nameEl) nameEl.textContent = file?.name || '';
+  if (metaEl) metaEl.textContent = formatIncomingPreviewMeta(file);
+  if (docEl) docEl.hidden = !file;
+}
+
+function buildFlowAttachmentPayloads(file) {
+  if (!file) return [];
   const now = new Date().toISOString();
-  return files.map((file) => {
-    const ext = typeof getFileExtension === 'function' ? getFileExtension(file.name) : '';
-    return {
-      id: generateAttachmentId(),
-      name: file.name,
-      type: (ext || 'file').toUpperCase(),
-      sizeBytes: typeof file.size === 'number' ? file.size : 0,
-      author: 'Система',
-      createdAt: now,
-      source: 'initial',
-    };
-  });
+  const ext = typeof getFileExtension === 'function' ? getFileExtension(file.name) : '';
+  return [{
+    id: generateAttachmentId(),
+    name: file.name,
+    type: (ext || 'file').toUpperCase(),
+    sizeBytes: typeof file.size === 'number' ? file.size : 0,
+    author: 'Система',
+    createdAt: now,
+    source: 'initial',
+  }];
 }
 
 function updateFlowOpenCardButton(appealId) {
-  const btn = document.querySelector('#flow-step-3 [data-go="appeal-detail"]');
+  const btn = document.getElementById('flow-open-card')
+    || document.querySelector('#flow-step-3 [data-go="appeal-detail"]');
   if (!btn) return;
-  if (appealId) btn.dataset.appealId = appealId;
-  else delete btn.dataset.appealId;
+  if (appealId) {
+    btn.dataset.appealId = appealId;
+    btn.disabled = false;
+  } else {
+    delete btn.dataset.appealId;
+    if ('disabled' in btn) btn.disabled = true;
+  }
+}
+
+function openCreatedFlowAppeal() {
+  const appealId = flowState.createdAppealId
+    || document.getElementById('flow-open-card')?.dataset?.appealId;
+  if (!appealId) return;
+  navigate('appeal-detail', { appealId });
 }
 
 function finalizeFlowAppeal() {
@@ -262,7 +295,7 @@ function finalizeFlowAppeal() {
     category: appealCardData.category,
     source: appealCardData.source,
     region: appealCardData.region,
-    attachments: buildFlowAttachmentPayloads(flowState.selectedFiles),
+    attachments: buildFlowAttachmentPayloads(flowState.selectedFile),
   });
   flowState.createdAppealId = created.id;
   renderFlowAppealCard(document.getElementById('new-appeal-card'), {
@@ -278,10 +311,11 @@ function resetFlowDraft() {
   flowState.step = 1;
   flowState.dirty = false;
   flowState.completed = false;
-  flowState.selectedFiles = [];
+  flowState.selectedFile = null;
   flowState.createdAppealId = null;
   setFlowStep(1);
   updateFlowOpenCardButton(null);
+  renderIncomingFilePreview();
 
   const uploadZone = document.getElementById('upload-zone');
   const incomingPreview = document.getElementById('incoming-preview');
@@ -393,8 +427,9 @@ function initFlow() {
 
   document.getElementById('btn-upload').addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', () => {
-    if (!fileInput.files?.length) return;
-    setFlowSelectedFiles(fileInput.files);
+    const file = fileInput.files?.[0] || null;
+    if (!file) return;
+    setFlowSelectedFile(file);
     showIncomingPreview();
   });
   uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('upload-zone--dragover'); });
@@ -402,16 +437,22 @@ function initFlow() {
   uploadZone.addEventListener('drop', (e) => {
     e.preventDefault();
     uploadZone.classList.remove('upload-zone--dragover');
-    const files = e.dataTransfer?.files;
-    if (!files?.length) return;
-    setFlowSelectedFiles(files);
+    const file = e.dataTransfer?.files?.[0] || null;
+    if (!file) return;
+    setFlowSelectedFile(file);
     showIncomingPreview();
   });
   document.getElementById('btn-start-ai').addEventListener('click', simulateAIProcessing);
+  document.getElementById('flow-open-card')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openCreatedFlowAppeal();
+  });
   document.getElementById('flow-back')?.addEventListener('click', () => {
     if (!leaveFlowIfAllowed()) return;
     navigate('dashboard');
   });
+  renderIncomingFilePreview();
 }
 
 function syncFilterSelects(sourceRoot, targetRoot) {
