@@ -232,6 +232,31 @@ function initFlow() {
   document.getElementById('btn-start-ai').addEventListener('click', simulateAIProcessing);
 }
 
+function initSidebarToggle() {
+  const shell = document.querySelector('.app-shell');
+  const toggle = document.getElementById('sidebar-toggle');
+  if (!shell || !toggle) return;
+
+  const storageKey = 'appeal-hub-sidebar-collapsed';
+
+  function setCollapsed(collapsed) {
+    shell.classList.toggle('app-shell--sidebar-collapsed', collapsed);
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    toggle.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+    try {
+      localStorage.setItem(storageKey, collapsed ? '1' : '0');
+    } catch (_) { /* ignore */ }
+  }
+
+  try {
+    if (localStorage.getItem(storageKey) === '1') setCollapsed(true);
+  } catch (_) { /* ignore */ }
+
+  toggle.addEventListener('click', () => {
+    setCollapsed(!shell.classList.contains('app-shell--sidebar-collapsed'));
+  });
+}
+
 function initNavigation() {
   document.querySelectorAll('[data-view]').forEach((el) => {
     el.addEventListener('click', () => {
@@ -291,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(renderTable, 400);
 
   initFlow();
+  initSidebarToggle();
   initNavigation();
   handleRoute();
 });
