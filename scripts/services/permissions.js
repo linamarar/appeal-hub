@@ -30,4 +30,20 @@ const Permissions = {
   canViewInternalComments(user = getCurrentUser()) {
     return user.permissions.includes('appeal.viewInternalComments');
   },
+
+  canViewClient(user = getCurrentUser()) {
+    return user.permissions.includes('client.view');
+  },
+
+  canViewClientAppeals(user = getCurrentUser()) {
+    return user.permissions.includes('client.viewAppeals');
+  },
+
+  canViewClientDocuments(user = getCurrentUser()) {
+    return user.permissions.includes('client.viewDocuments');
+  },
+
+  canViewClientInternalInfo(user = getCurrentUser()) {
+    return user.permissions.includes('client.viewInternalInfo');
+  },
 };

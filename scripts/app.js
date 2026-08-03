@@ -81,7 +81,7 @@ function switchView(viewId) {
   if (target) target.classList.add('view--active');
   const navActiveMap = {
     dashboard: ['dashboard'],
-    clients: ['clients', 'client-preview'],
+    clients: ['clients', 'client-detail'],
     templates: ['templates'],
     analytics: ['analytics'],
     settings: ['settings', 'settings-detail'],
@@ -97,7 +97,7 @@ function parseRoute() {
   const appealMatch = hash.match(/^\/appeals\/([^/?#]+)$/);
   if (appealMatch) return { view: 'appeal-detail', appealId: decodeURIComponent(appealMatch[1]) };
   const clientMatch = hash.match(/^\/clients\/([^/?#]+)$/);
-  if (clientMatch) return { view: 'client-preview', clientId: decodeURIComponent(clientMatch[1]) };
+  if (clientMatch) return { view: 'client-detail', clientId: decodeURIComponent(clientMatch[1]) };
   const settingsMatch = hash.match(/^\/settings\/([^/?#]+)$/);
   if (settingsMatch) return { view: 'settings-detail', settingsSlug: decodeURIComponent(settingsMatch[1]) };
   if (hash === '/flow') return { view: 'flow' };
@@ -122,7 +122,7 @@ function navigate(view, params = {}) {
     location.hash = `/appeals/${encodeURIComponent(params.appealId)}`;
     return;
   }
-  if (view === 'client-preview' && params.clientId) {
+  if (view === 'client-detail' && params.clientId) {
     location.hash = `/clients/${encodeURIComponent(params.clientId)}`;
     return;
   }
@@ -139,7 +139,7 @@ function handleRoute() {
   if (route.view === 'appeal-detail') AppealDetailPage.load(route.appealId);
   if (route.view === 'dashboard') renderTable();
   if (route.view === 'clients') ClientsPage.load();
-  if (route.view === 'client-preview') ClientsPage.loadPreview(route.clientId);
+  if (route.view === 'client-detail') ClientDetailPage.load(route.clientId);
   if (route.view === 'templates') TemplatesPage.load();
   if (route.view === 'analytics') AnalyticsPage.load();
   if (route.view === 'settings') SettingsPage.load();
@@ -350,7 +350,7 @@ function initNavigation() {
     const clientId = trigger.dataset.clientId;
     const settingsSlug = trigger.dataset.settingsSlug;
     if (view === 'appeal-detail' && appealId) navigate('appeal-detail', { appealId });
-    else if (view === 'client-preview' && clientId) navigate('client-preview', { clientId });
+    else if (view === 'client-detail' && clientId) navigate('client-detail', { clientId });
     else if (view === 'settings-detail' && settingsSlug) navigate('settings-detail', { settingsSlug });
     else navigate(view);
   });

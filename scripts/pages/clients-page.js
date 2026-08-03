@@ -34,7 +34,7 @@ const ClientsPage = (() => {
         <td>${c.openAppeals}</td>
         <td class="ui-data-table__muted">${PageUtils.formatDateTime(c.lastActivityAt)}</td>
         <td>${statusBadge(c.status)}</td>
-        <td><button type="button" class="ui-data-table__link" data-go="client-preview" data-client-id="${PageUtils.escapeHtml(c.id)}">Открыть</button></td>
+        <td><button type="button" class="ui-data-table__link" data-go="client-detail" data-client-id="${PageUtils.escapeHtml(c.id)}">Открыть</button></td>
       </tr>
     `).join('');
   }
@@ -81,7 +81,7 @@ const ClientsPage = (() => {
     document.getElementById('clients-table-body')?.addEventListener('click', (e) => {
       if (e.target.closest('[data-go]')) return;
       const row = e.target.closest('tr[data-client-id]');
-      if (row) navigate('client-preview', { clientId: row.dataset.clientId });
+      if (row) navigate('client-detail', { clientId: row.dataset.clientId });
     });
   }
 
@@ -93,36 +93,5 @@ const ClientsPage = (() => {
     }, 200);
   }
 
-  function loadPreview(clientId) {
-    const client = ClientsRepository.getById(clientId);
-    const root = document.getElementById('client-preview-content');
-    if (!root) return;
-    if (!client) {
-      root.innerHTML = '<div class="ui-error-state">Клиент не найден</div>';
-      return;
-    }
-    root.innerHTML = `
-      <header class="ui-page__header">
-        <div>
-          <button type="button" class="ui-page__back" data-go="clients">← К списку клиентов</button>
-          <h1 class="ui-page__title">${PageUtils.escapeHtml(client.name)}</h1>
-          <p class="ui-page__desc">${PageUtils.escapeHtml(client.clientType)} · ${PageUtils.escapeHtml(client.id)}</p>
-        </div>
-      </header>
-      <div class="ui-card">
-        <div class="ui-card__header"><span class="ui-card__title">Краткая информация</span></div>
-        <div class="ui-card__body">
-          <dl class="ui-meta-list">
-            <div class="ui-meta-list__row"><dt>Контакты</dt><dd>${PageUtils.escapeHtml(client.phone)} · ${PageUtils.escapeHtml(client.email)}</dd></div>
-            <div class="ui-meta-list__row"><dt>Объект / договор</dt><dd>${PageUtils.escapeHtml(client.objectOrContract)}</dd></div>
-            <div class="ui-meta-list__row"><dt>Обращений</dt><dd>${client.totalAppeals} (открытых: ${client.openAppeals})</dd></div>
-            <div class="ui-meta-list__row"><dt>Последняя активность</dt><dd>${PageUtils.formatDateTime(client.lastActivityAt)}</dd></div>
-            <div class="ui-meta-list__row"><dt>Статус</dt><dd>${statusBadge(client.status)}</dd></div>
-          </dl>
-          <p class="ui-page__notice">Полная карточка клиента будет реализована на следующем этапе.</p>
-        </div>
-      </div>`;
-  }
-
-  return { load, loadPreview };
+  return { load };
 })();

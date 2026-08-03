@@ -24,6 +24,10 @@ const CURRENT_USER = {
     'appeal.addInternalComment',
     'appeal.addAttachment',
     'appeal.viewInternalComments',
+    'client.view',
+    'client.viewAppeals',
+    'client.viewDocuments',
+    'client.viewInternalInfo',
   ],
 };
 

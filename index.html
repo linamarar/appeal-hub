@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="styles/pages/appeal-detail.css" />
   <link rel="stylesheet" href="styles/pages/analytics.css" />
   <link rel="stylesheet" href="styles/pages/settings.css" />
+  <link rel="stylesheet" href="styles/pages/client-detail.css" />
   <link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
@@ -397,7 +398,21 @@
           <div class="ui-page-data-panel" id="clients-data"><div class="ui-data-table-wrap"><table class="ui-data-table"><thead><tr><th>Клиент</th><th>Контакты</th><th>Объект / договор</th><th>Всего</th><th>Открытые</th><th>Активность</th><th>Статус</th><th></th></tr></thead><tbody id="clients-table-body"></tbody></table></div></div>
         </section>
 
-        <section class="view" id="view-client-preview"><div id="client-preview-content"></div></section>
+        <section class="view" id="view-client-detail">
+          <div class="client-detail__state" id="client-detail-loading">
+            <div class="ui-loader"><div class="ui-loader__spinner" role="status" aria-label="Загрузка"></div><p class="ui-loader__text">Загрузка карточки клиента…</p></div>
+          </div>
+          <div class="client-detail__state" id="client-detail-not-found">
+            <div class="ui-empty-state">
+              <h2 class="ui-empty-state__title">Клиент не найден</h2>
+              <p class="ui-empty-state__text">Проверьте идентификатор или вернитесь к списку.</p>
+              <button type="button" class="ui-button ui-button--secondary ui-button--md" data-go="clients">Вернуться к списку клиентов</button>
+            </div>
+          </div>
+          <div class="client-detail__state" id="client-detail-loaded">
+            <div id="client-detail-content"></div>
+          </div>
+        </section>
 
         <section class="view" id="view-templates">
           <header class="ui-page__header"><div><h1 class="ui-page__title">Шаблоны</h1><p class="ui-page__desc">Шаблоны ответов и документов для обработки обращений</p></div><div class="ui-page__actions"><span class="ui-tooltip"><button type="button" class="ui-button ui-button--primary ui-button--md" disabled>Создать шаблон</button><span class="ui-tooltip__bubble">Будет реализовано на следующем этапе</span></span></div></header>
@@ -515,8 +530,10 @@
   <script src="scripts/services/sla-service.js"></script>
   <script src="scripts/services/permissions.js"></script>
   <script src="scripts/services/appeals-service.js"></script>
+  <script src="scripts/services/clients-service.js"></script>
   <script src="scripts/ui/page-utils.js"></script>
   <script src="scripts/pages/clients-page.js"></script>
+  <script src="scripts/pages/client-detail-page.js"></script>
   <script src="scripts/pages/templates-page.js"></script>
   <script src="scripts/pages/analytics-page.js"></script>
   <script src="scripts/pages/settings-page.js"></script>

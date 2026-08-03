@@ -276,6 +276,46 @@ const AppealsRepository = (() => {
         { id: 'h1', appealId: 'AH-2026-01842', type: 'CREATED', actor: 'Система', createdAt: '2026-07-27T17:30:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
     },
+    'AH-2026-C001-01': {
+      id: 'AH-2026-C001-01', clientId: 'CL-001', title: 'Перебои с горячей водой', category: 'ЖКХ', priority: 'Высокий', statusCode: 'IN_PROGRESS',
+      assigneeId: 'user-004', createdAt: '2026-07-20T09:00:00+04:00', updatedAt: '2026-07-26T09:00:00+04:00', slaDueAt: '2026-08-05T09:00:00+04:00',
+      client: { name: 'Соколова Марина Алексеевна', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-07-20T09:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C001-02': {
+      id: 'AH-2026-C001-02', clientId: 'CL-001', title: 'Запрос справки по начислениям', category: 'ЖКХ', priority: 'Обычный', statusCode: 'NEW',
+      assigneeId: null, createdAt: '2026-07-22T14:00:00+04:00', updatedAt: '2026-07-22T14:00:00+04:00', slaDueAt: '2026-08-01T14:00:00+04:00',
+      client: { name: 'Соколова Марина Алексеевна', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-07-22T14:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C001-03': {
+      id: 'AH-2026-C001-03', clientId: 'CL-001', title: 'Шум от лифта', category: 'ЖКХ', priority: 'Низкий', statusCode: 'CLOSED',
+      assigneeId: 'user-004', createdAt: '2026-05-10T10:00:00+04:00', updatedAt: '2026-05-20T16:00:00+04:00', slaDueAt: '2026-05-17T10:00:00+04:00',
+      client: { name: 'Соколова Марина Алексеевна', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-05-10T10:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C003-01': {
+      id: 'AH-2026-C003-01', clientId: 'CL-003', title: 'Перерасчёт коммунальных платежей', category: 'ЖКХ', priority: 'Обычный', statusCode: 'CLOSED',
+      assigneeId: 'user-002', createdAt: '2026-04-01T11:00:00+04:00', updatedAt: '2026-04-15T10:00:00+04:00', slaDueAt: '2026-04-08T11:00:00+04:00',
+      client: { name: 'Кузнецов Дмитрий Сергеевич', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-04-01T11:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C005-01': {
+      id: 'AH-2026-C005-01', clientId: 'CL-005', title: 'Неисправность домофона', category: 'ЖКХ', priority: 'Средний', statusCode: 'ASSIGNED',
+      assigneeId: 'user-001', createdAt: '2026-07-29T10:20:00+04:00', updatedAt: '2026-07-29T11:00:00+04:00', slaDueAt: '2026-08-05T10:20:00+04:00',
+      client: { name: 'Волкова Елена Игоревна', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-07-29T10:20:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C007-01': {
+      id: 'AH-2026-C007-01', clientId: 'CL-007', title: 'Некорректные показания счётчика', category: 'ЖКХ', priority: 'Высокий', statusCode: 'IN_PROGRESS',
+      assigneeId: 'user-004', createdAt: '2026-07-30T10:00:00+04:00', updatedAt: '2026-08-01T11:00:00+04:00', slaDueAt: '2026-08-06T10:00:00+04:00',
+      client: { name: 'Морозов Павел Викторович', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-07-30T10:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C007-02': {
+      id: 'AH-2026-C007-02', clientId: 'CL-007', title: 'Запрос акта выполненных работ', category: 'Договор', priority: 'Обычный', statusCode: 'NEW',
+      assigneeId: null, createdAt: '2026-08-01T09:00:00+04:00', updatedAt: '2026-08-01T09:00:00+04:00', slaDueAt: '2026-08-08T09:00:00+04:00',
+      client: { name: 'Морозов Павел Викторович', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-08-01T09:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
+    'AH-2026-C007-03': {
+      id: 'AH-2026-C007-03', clientId: 'CL-007', title: 'Жалоба на качество уборки', category: 'ЖКХ', priority: 'Низкий', statusCode: 'CLOSED',
+      assigneeId: 'user-001', createdAt: '2026-06-01T10:00:00+04:00', updatedAt: '2026-06-10T18:00:00+04:00', slaDueAt: '2026-06-08T10:00:00+04:00',
+      client: { name: 'Морозов Павел Викторович', type: 'Физическое лицо' }, attachments: [], messages: [], history: [{ id: 'h1', type: 'CREATED', actor: 'Система', createdAt: '2026-06-01T10:00:00+04:00', description: 'Обращение создано', kind: 'system' }],
+    },
   };
 
   function cloneRecord(record) {
@@ -336,6 +376,10 @@ const AppealsRepository = (() => {
     return Object.values(records).map((r) => cloneRecord(r));
   }
 
+  function getByClientId(clientId) {
+    return Object.values(records).filter((r) => r.clientId === clientId).map((r) => cloneRecord(r));
+  }
+
   function getById(id, delayMs = 200) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(getRawById(id)), delayMs);
@@ -376,6 +420,7 @@ const AppealsRepository = (() => {
 
   return {
     getList,
+    getByClientId,
     getById,
     getRawById,
     saveRecord,
