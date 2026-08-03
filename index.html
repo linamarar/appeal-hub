@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appeal Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <div class="sidebar__logo">AH</div>
+        <div>
+          <div class="sidebar__title">Appeal Hub</div>
+          <div class="sidebar__subtitle">Обработка обращений</div>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <button class="nav-item nav-item--active" data-view="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Дашборд
+        </button>
+        <button class="nav-item" data-view="flow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Новое обращение
+        </button>
+        <button class="nav-item" data-view="appeal-detail">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Карточка обращения
+        </button>
+      </nav>
+
+      <div class="sidebar__footer">
+        <div class="flow-indicator">
+          <span class="flow-indicator__dot flow-indicator__dot--active"></span>
+          <span>AI-обработка активна</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- Dashboard -->
+      <section class="view view--active" id="view-dashboard">
+        <header class="page-header">
+          <div>
+            <h1>Дашборд</h1>
+            <p class="page-header__desc">Все обращения и показатели за последние 30 дней</p>
+          </div>
+          <button class="btn btn--primary" data-go="flow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Загрузить обращение
+          </button>
+        </header>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card__label">Всего обращений</div>
+            <div class="stat-card__value">247</div>
+            <div class="stat-card__change stat-card__change--up">+12 за неделю</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Обработано AI</div>
+            <div class="stat-card__value">231</div>
+            <div class="stat-card__change">93,5% автоматически</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Среднее время обработки</div>
+            <div class="stat-card__value">1,8 мин</div>
+            <div class="stat-card__change stat-card__change--up">−24% к прошлому месяцу</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Перс. данные удалены</div>
+            <div class="stat-card__value">100%</div>
+            <div class="stat-card__change">1 842 поля замаскировано</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__header">
+            <h2>Последние обращения</h2>
+            <div class="panel__actions">
+              <div class="search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Поиск по номеру или теме..." />
+              </div>
+              <select class="select">
+                <option>Все статусы</option>
+                <option>Новое</option>
+                <option>Обработано</option>
+                <option>В работе</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>№</th>
+                  <th>Дата поступления</th>
+                  <th>Тема</th>
+                  <th>Категория</th>
+                  <th>AI-статус</th>
+                  <th>Статус</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="appeals-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Flow: document intake + AI processing -->
+      <section class="view" id="view-flow">
+        <header class="page-header">
+          <div>
+            <h1>Новое обращение</h1>
+            <p class="page-header__desc">Загрузка документа и автоматическая обработка AI</p>
+          </div>
+        </header>
+
+        <div class="flow-steps">
+          <div class="flow-step flow-step--done" data-step="1">
+            <div class="flow-step__num">1</div>
+            <span>Поступление</span>
+          </div>
+          <div class="flow-step__line"></div>
+          <div class="flow-step" data-step="2">
+            <div class="flow-step__num">2</div>
+            <span>AI-распознавание</span>
+          </div>
+          <div class="flow-step__line"></div>
+          <div class="flow-step" data-step="3">
+            <div class="flow-step__num">3</div>
+            <span>Карточка</span>
+          </div>
+        </div>
+
+        <!-- Step 1: Upload -->
+        <div class="flow-panel flow-panel--active" id="flow-step-1">
+          <div class="upload-zone" id="upload-zone">
+            <div class="upload-zone__icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h3>Документ поступил в систему</h3>
+            <p>Перетащите файл или нажмите для выбора. Поддерживаются PDF, DOCX, JPG, PNG.</p>
+            <button class="btn btn--primary" id="btn-upload">Выбрать документ</button>
+            <input type="file" id="file-input" hidden accept=".pdf,.docx,.jpg,.jpeg,.png" />
+          </div>
+
+          <div class="incoming-preview" id="incoming-preview" hidden>
+            <div class="incoming-preview__doc">
+              <div class="doc-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div>
+                <div class="incoming-preview__name">Обращение_№1847.pdf</div>
+                <div class="incoming-preview__meta">PDF · 2,4 МБ · поступило только что</div>
+              </div>
+            </div>
+            <div class="doc-preview">
+              <div class="doc-preview__header">ОБРАЩЕНИЕ ГРАЖДАНИНА</div>
+              <div class="doc-preview__body">
+                <p><strong>От:</strong> Иванов Иван Петрович</p>
+                <p><strong>Адрес:</strong> г. Москва, ул. Ленина, д. 15, кв. 42</p>
+                <p><strong>Телефон:</strong> +7 (916) 123-45-67</p>
+                <p><strong>Email:</strong> ivanov.ip@mail.ru</p>
+                <p><strong>Паспорт:</strong> 4510 123456</p>
+                <br>
+                <p>Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг по адресу проживания. С 15.03.2026 наблюдаются перебои с горячим водоснабжением...</p>
+              </div>
+            </div>
+            <button class="btn btn--primary" id="btn-start-ai">Передать на AI-обработку</button>
+          </div>
+        </div>
+
+        <!-- Step 2: AI Processing -->
+        <div class="flow-panel" id="flow-step-2">
+          <div class="ai-processing">
+            <div class="ai-processing__header">
+              <div class="ai-badge">
+                <span class="ai-badge__pulse"></span>
+                AI обрабатывает документ
+              </div>
+            </div>
+
+            <div class="processing-grid">
+              <div class="processing-doc">
+                <div class="processing-doc__label">Исходный документ</div>
+                <div class="doc-preview doc-preview--original">
+                  <div class="doc-preview__header">ОБРАЩЕНИЕ ГРАЖДАНИНА</div>
+                  <div class="doc-preview__body">
+                    <p><strong>От:</strong> <mark class="pii">Иванов Иван Петрович</mark></p>
+                    <p><strong>Адрес:</strong> <mark class="pii">г. Москва, ул. Ленина, д. 15, кв. 42</mark></p>
+                    <p><strong>Телефон:</strong> <mark class="pii">+7 (916) 123-45-67</mark></p>
+                    <p><strong>Email:</strong> <mark class="pii">ivanov.ip@mail.ru</mark></p>
+                    <p><strong>Паспорт:</strong> <mark class="pii">4510 123456</mark></p>
+                    <br>
+                    <p>Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг...</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="processing-arrow">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+
+              <div class="processing-doc">
+                <div class="processing-doc__label">После обработки AI</div>
+                <div class="doc-preview doc-preview--cleaned">
+                  <div class="doc-preview__header">ОБРАЩЕНИЕ ГРАЖДАНИНА</div>
+                  <div class="doc-preview__body">
+                    <p><strong>От:</strong> <span class="redacted">████████████</span></p>
+                    <p><strong>Адрес:</strong> <span class="redacted">████████████████</span></p>
+                    <p><strong>Телефон:</strong> <span class="redacted">████████████</span></p>
+                    <p><strong>Email:</strong> <span class="redacted">████████████</span></p>
+                    <p><strong>Паспорт:</strong> <span class="redacted">████████</span></p>
+                    <br>
+                    <p>Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-log">
+              <div class="ai-log__item ai-log__item--done">
+                <span class="ai-log__check">✓</span>
+                Распознан текст документа (OCR)
+              </div>
+              <div class="ai-log__item ai-log__item--done">
+                <span class="ai-log__check">✓</span>
+                Обнаружено 5 полей с персональными данными
+              </div>
+              <div class="ai-log__item ai-log__item--done">
+                <span class="ai-log__check">✓</span>
+                Персональные данные замаскированы
+              </div>
+              <div class="ai-log__item ai-log__item--active">
+                <span class="ai-log__spinner"></span>
+                Извлечение структурированных данных...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Appeal card created -->
+        <div class="flow-panel" id="flow-step-3">
+          <div class="success-banner">
+            <div class="success-banner__icon">✓</div>
+            <div>
+              <strong>Обращение успешно создано</strong>
+              <p>Данные извлечены и занесены в систему. Персональные данные удалены.</p>
+            </div>
+          </div>
+
+          <div class="appeal-card" id="new-appeal-card"></div>
+
+          <div class="flow-actions">
+            <button class="btn btn--secondary" data-go="dashboard">Перейти на дашборд</button>
+            <button class="btn btn--primary" data-go="appeal-detail">Открыть карточку</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Appeal detail -->
+      <section class="view" id="view-appeal-detail">
+        <header class="page-header">
+          <div>
+            <button class="back-link" data-go="dashboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Назад к дашборду
+            </button>
+            <h1>Обращение №AH-2026-01847</h1>
+            <p class="page-header__desc">Создано 29.07.2026 · Обработано AI за 1,4 мин</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--secondary">Экспорт</button>
+            <button class="btn btn--primary">Назначить ответственного</button>
+          </div>
+        </header>
+
+        <div class="detail-grid">
+          <div class="detail-main">
+            <div class="appeal-card appeal-card--full" id="detail-appeal-card"></div>
+
+            <div class="panel">
+              <div class="panel__header">
+                <h2>Текст обращения</h2>
+              </div>
+              <div class="appeal-text">
+                <p>Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг по адресу проживания. С 15.03.2026 наблюдаются перебои с горячим водоснабжением — горячая вода отсутствует более 8 часов в сутки.</p>
+                <p>Обращался в управляющую компанию «ЖилКомСервис» неоднократно, однако проблема не решена. Прошу провести проверку и принять меры.</p>
+              </div>
+            </div>
+          </div>
+
+          <aside class="detail-sidebar">
+            <div class="panel">
+              <div class="panel__header"><h2>AI-обработка</h2></div>
+              <div class="meta-list">
+                <div class="meta-list__item">
+                  <span class="meta-list__label">Статус AI</span>
+                  <span class="badge badge--success">Завершено</span>
+                </div>
+                <div class="meta-list__item">
+                  <span class="meta-list__label">Время обработки</span>
+                  <span>1 мин 24 сек</span>
+                </div>
+                <div class="meta-list__item">
+                  <span class="meta-list__label">Поля замаскированы</span>
+                  <span>5 из 5</span>
+                </div>
+                <div class="meta-list__item">
+                  <span class="meta-list__label">Уверенность AI</span>
+                  <span>97,3%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel__header"><h2>История</h2></div>
+              <div class="timeline">
+                <div class="timeline__item">
+                  <div class="timeline__time">12:14</div>
+                  <div class="timeline__text">Обращение создано из документа</div>
+                </div>
+                <div class="timeline__item">
+                  <div class="timeline__time">12:13</div>
+                  <div class="timeline__text">AI завершил обработку</div>
+                </div>
+                <div class="timeline__item">
+                  <div class="timeline__time">12:12</div>
+                  <div class="timeline__text">Документ поступил в систему</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="scripts/app.js"></script>
+</body>
+</html>
