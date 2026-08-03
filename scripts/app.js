@@ -7,7 +7,6 @@ const PRIORITY_META = {
 };
 
 const appealCardData = {
-  id: 'AH-2026-01847',
   title: 'Некачественное предоставление коммунальных услуг',
   category: 'ЖКХ',
   date: '29.07.2026',
@@ -216,6 +215,8 @@ const flowState = {
   step: 1,
   dirty: false,
   completed: false,
+  selectedFiles: [],
+  createdAppealId: null,
 };
 
 function hasFlowDraft() {
@@ -227,11 +228,60 @@ function markFlowDirty() {
   flowState.completed = false;
 }
 
+function setFlowSelectedFiles(files) {
+  flowState.selectedFiles = files?.length ? Array.from(files) : [];
+}
+
+function buildFlowAttachmentPayloads(files) {
+  if (!files?.length) return [];
+  const now = new Date().toISOString();
+  return files.map((file) => {
+    const ext = typeof getFileExtension === 'function' ? getFileExtension(file.name) : '';
+    return {
+      id: generateAttachmentId(),
+      name: file.name,
+      type: (ext || 'file').toUpperCase(),
+      sizeBytes: typeof file.size === 'number' ? file.size : 0,
+      author: 'Система',
+      createdAt: now,
+      source: 'initial',
+    };
+  });
+}
+
+function updateFlowOpenCardButton(appealId) {
+  const btn = document.querySelector('#flow-step-3 [data-go="appeal-detail"]');
+  if (!btn) return;
+  if (appealId) btn.dataset.appealId = appealId;
+  else delete btn.dataset.appealId;
+}
+
+function finalizeFlowAppeal() {
+  const created = AppealsRepository.addAppealFromFlow({
+    title: appealCardData.title,
+    category: appealCardData.category,
+    source: appealCardData.source,
+    region: appealCardData.region,
+    attachments: buildFlowAttachmentPayloads(flowState.selectedFiles),
+  });
+  flowState.createdAppealId = created.id;
+  renderFlowAppealCard(document.getElementById('new-appeal-card'), {
+    ...appealCardData,
+    id: created.id,
+  });
+  updateFlowOpenCardButton(created.id);
+  renderTable();
+  return created;
+}
+
 function resetFlowDraft() {
   flowState.step = 1;
   flowState.dirty = false;
   flowState.completed = false;
+  flowState.selectedFiles = [];
+  flowState.createdAppealId = null;
   setFlowStep(1);
+  updateFlowOpenCardButton(null);
 
   const uploadZone = document.getElementById('upload-zone');
   const incomingPreview = document.getElementById('incoming-preview');
@@ -317,15 +367,10 @@ function simulateAIProcessing() {
       newItem.innerHTML = '<span class="ai-log__check">✓</span> Карточка обращения создана';
       lastItem.parentElement.appendChild(newItem);
       setTimeout(() => {
-        renderFlowAppealCard(document.getElementById('new-appeal-card'), appealCardData);
+        finalizeFlowAppeal();
         setFlowStep(3);
         flowState.completed = true;
         flowState.dirty = false;
-        const list = AppealsService.getList();
-        if (!list.find((a) => a.isNew)) {
-          AppealsRepository.addAppealFromFlow(appealCardData);
-          renderTable();
-        }
       }, 600);
     }, 800);
   }, 2000);
@@ -349,6 +394,7 @@ function initFlow() {
   document.getElementById('btn-upload').addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', () => {
     if (!fileInput.files?.length) return;
+    setFlowSelectedFiles(fileInput.files);
     showIncomingPreview();
   });
   uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('upload-zone--dragover'); });
@@ -356,6 +402,9 @@ function initFlow() {
   uploadZone.addEventListener('drop', (e) => {
     e.preventDefault();
     uploadZone.classList.remove('upload-zone--dragover');
+    const files = e.dataTransfer?.files;
+    if (!files?.length) return;
+    setFlowSelectedFiles(files);
     showIncomingPreview();
   });
   document.getElementById('btn-start-ai').addEventListener('click', simulateAIProcessing);

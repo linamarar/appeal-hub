@@ -101,17 +101,17 @@ const AppealsRepository = (() => {
       channel: 'Портал госуслуг',
       responseFormat: 'Email',
       region: 'г. Москва',
-      initiator: 'И******** И*** П********',
+      initiator: 'Иванов Иван Петрович',
       description: 'Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг по адресу проживания. С 15.03.2026 наблюдаются перебои с горячим водоснабжением — горячая вода отсутствует более 8 часов в сутки.\n\nОбращался в управляющую компанию «ЖилКомСервис» неоднократно, однако проблема не решена. Прошу провести проверку и принять меры.',
-      client: { name: 'И******** И*** П********', phone: '+7 (***) ***-**-**', email: 'i*****@******.ru', type: 'Физическое лицо', appealsCount: 3 },
+      client: { name: 'Иванов Иван Петрович', phone: '+7 (916) 123-45-67', email: 'ivanov.ip@mail.ru', type: 'Физическое лицо', appealsCount: 3 },
       attachments: [{ id: 'att-1', name: 'Обращение_№1847.pdf', type: 'PDF', size: '2,4 МБ', date: '29.07.2026', author: 'Система', createdAt: '2026-07-29T12:12:00+04:00' }],
       messages: [
         {
           id: 'msg-client-1847-1',
           appealId: 'AH-2026-01847',
           type: MESSAGE_TYPES.CLIENT_MESSAGE,
-          authorId: 'client-demo-001',
-          authorName: 'И******** И*** П********',
+          authorId: 'client-ivanov',
+          authorName: 'Иванов Иван Петрович',
           authorRole: 'Клиент',
           text: 'Добрый день! Прошу ускорить рассмотрение обращения — проблема с горячей водой сохраняется.',
           createdAt: '2026-07-30T09:30:00+04:00',
@@ -386,14 +386,30 @@ const AppealsRepository = (() => {
     });
   }
 
-  function addAppealFromFlow(appealCard) {
-    const id = appealCard.id;
-    if (records[id]) return records[id];
+  function generateFlowAppealId() {
+    let max = 0;
+    Object.keys(records).forEach((key) => {
+      const match = /^AH-2026-(\d+)$/.exec(key);
+      if (match) max = Math.max(max, parseInt(match[1], 10));
+    });
+    return `AH-2026-${String(max + 1).padStart(5, '0')}`;
+  }
+
+  function addAppealFromFlow(appealCard = {}) {
+    const requestedId = appealCard.id;
+    const id = requestedId && !records[requestedId] ? requestedId : generateFlowAppealId();
     const now = new Date().toISOString();
+    const sourceAttachments = Array.isArray(appealCard.attachments) ? appealCard.attachments : [];
+    const attachments = sourceAttachments.map((item) => ({
+      ...item,
+      id: item.id || generateAttachmentId(),
+      appealId: id,
+    }));
+
     records[id] = {
       id,
-      title: appealCard.title,
-      category: appealCard.category,
+      title: appealCard.title || 'Новое обращение',
+      category: appealCard.category || 'Не указано',
       aiStatus: 'Обработано',
       priority: 'Высокий',
       statusCode: 'NEW',
@@ -406,12 +422,20 @@ const AppealsRepository = (() => {
       source: appealCard.source || 'PDF-документ',
       channel: 'Портал',
       responseFormat: 'Email',
-      region: appealCard.region,
-      description: 'Нет данных',
-      client: null,
-      attachments: [],
+      region: appealCard.region || null,
+      description: appealCard.description || 'Нет данных',
+      client: appealCard.client ? { ...appealCard.client } : null,
+      attachments,
       messages: [],
-      history: [{ id: 'h-new', appealId: id, type: 'CREATED', actor: 'Система', createdAt: now, description: 'Обращение создано из документа', kind: 'system' }],
+      history: [{
+        id: `h-${id}`,
+        appealId: id,
+        type: 'CREATED',
+        actor: 'Система',
+        createdAt: now,
+        description: 'Обращение создано из документа',
+        kind: 'system',
+      }],
       isNew: true,
     };
     ensureMessages(records[id]);
@@ -432,6 +456,7 @@ const AppealsRepository = (() => {
     getAttachments,
     ensureMessages,
     ensureAttachments,
+    generateFlowAppealId,
     addAppealFromFlow,
     historyEventToMessage,
   };
