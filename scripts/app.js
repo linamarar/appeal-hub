@@ -1,6 +1,5 @@
 /**
- * Appeals list + shell (Figma UI Kit migration)
- * Legacy views: flow, appeal-detail — unchanged logic
+ * Appeals list + routing + flow
  */
 
 const STATUS_META = {
@@ -9,8 +8,6 @@ const STATUS_META = {
   'Закрыто': { label: 'Закрыта', variant: 'success' },
 };
 
-const PRIORITY_LABELS = ['Низкий', 'Обычный', 'Высокий', 'Критический'];
-
 const PRIORITY_META = {
   'Низкий': 'low',
   'Обычный': 'normal',
@@ -18,64 +15,6 @@ const PRIORITY_META = {
   'Высокий': 'high',
   'Критический': 'critical',
 };
-
-const appeals = [
-  {
-    id: 'AH-2026-01847',
-    date: '29.07.2026',
-    time: '12:14',
-    title: 'Некачественное предоставление коммунальных услуг',
-    category: 'ЖКХ',
-    aiStatus: 'Обработано',
-    status: 'Новое',
-    isNew: true,
-  },
-  {
-    id: 'AH-2026-01846',
-    date: '29.07.2026',
-    time: '11:02',
-    title: 'Жалоба на работу МФЦ',
-    category: 'Госуслуги',
-    aiStatus: 'Обработано',
-    status: 'В работе',
-  },
-  {
-    id: 'AH-2026-01845',
-    date: '28.07.2026',
-    time: '16:45',
-    title: 'Нарушение сроков строительства',
-    category: 'Строительство',
-    aiStatus: 'Обработано',
-    status: 'Закрыто',
-  },
-  {
-    id: 'AH-2026-01844',
-    date: '28.07.2026',
-    time: '14:20',
-    title: 'Проблема с начислением пенсии',
-    category: 'Соцзащита',
-    aiStatus: 'Обработано',
-    status: 'В работе',
-  },
-  {
-    id: 'AH-2026-01843',
-    date: '28.07.2026',
-    time: '09:15',
-    title: 'Незаконная реклама на фасаде',
-    category: 'Градостроительство',
-    aiStatus: 'Обработка',
-    status: 'Новое',
-  },
-  {
-    id: 'AH-2026-01842',
-    date: '27.07.2026',
-    time: '17:30',
-    title: 'Шум от проведения ремонтных работ',
-    category: 'ЖКХ',
-    aiStatus: 'Обработано',
-    status: 'Закрыто',
-  },
-];
 
 const appealCardData = {
   id: 'AH-2026-01847',
@@ -95,14 +34,10 @@ function renderStatusBadge(status) {
 
 function renderPriorityBadge(priority) {
   const variant = PRIORITY_META[priority] || 'normal';
-  return `<span class="ui-priority-badge ui-priority-badge--${variant}">${priority}</span>`;
+  return `<span class="ui-priority-badge ui-priority-badge--${variant}">${priority || 'Обычный'}</span>`;
 }
 
-function displayPriority(index) {
-  return PRIORITY_LABELS[index % PRIORITY_LABELS.length];
-}
-
-function renderAppealCard(container, data, full = false) {
+function renderFlowAppealCard(container, data) {
   container.innerHTML = `
     <div class="appeal-card__header">
       <div>
@@ -112,32 +47,13 @@ function renderAppealCard(container, data, full = false) {
       <span class="badge badge--neutral">${data.status}</span>
     </div>
     <div class="appeal-card__grid">
-      <div>
-        <div class="appeal-card__field-label">Категория</div>
-        <div class="appeal-card__field-value">${data.category}</div>
-      </div>
-      <div>
-        <div class="appeal-card__field-label">Дата поступления</div>
-        <div class="appeal-card__field-value">${data.date}</div>
-      </div>
-      <div>
-        <div class="appeal-card__field-label">Приоритет</div>
-        <div class="appeal-card__field-value">${data.priority}</div>
-      </div>
-      <div>
-        <div class="appeal-card__field-label">Источник</div>
-        <div class="appeal-card__field-value">${data.source}</div>
-      </div>
-      <div>
-        <div class="appeal-card__field-label">Регион</div>
-        <div class="appeal-card__field-value">${data.region}</div>
-      </div>
-      <div>
-        <div class="appeal-card__field-label">AI-статус</div>
-        <div class="appeal-card__field-value"><span class="badge badge--success">Обработано</span></div>
-      </div>
-    </div>
-  `;
+      <div><div class="appeal-card__field-label">Категория</div><div class="appeal-card__field-value">${data.category}</div></div>
+      <div><div class="appeal-card__field-label">Дата поступления</div><div class="appeal-card__field-value">${data.date}</div></div>
+      <div><div class="appeal-card__field-label">Приоритет</div><div class="appeal-card__field-value">${data.priority}</div></div>
+      <div><div class="appeal-card__field-label">Источник</div><div class="appeal-card__field-value">${data.source}</div></div>
+      <div><div class="appeal-card__field-label">Регион</div><div class="appeal-card__field-value">${data.region}</div></div>
+      <div><div class="appeal-card__field-label">AI-статус</div><div class="appeal-card__field-value"><span class="badge badge--success">Обработано</span></div></div>
+    </div>`;
 }
 
 function updateAppealsCount(count) {
@@ -160,22 +76,23 @@ function renderTable() {
   const tbody = document.getElementById('appeals-table-body');
   if (!tbody) return;
 
+  const appeals = AppealsRepository.getList();
   updateAppealsCount(appeals.length);
   setListState(appeals.length ? 'loaded' : 'empty');
 
-  tbody.innerHTML = appeals.map((a, index) => {
-    const priority = displayPriority(index);
+  tbody.innerHTML = appeals.map((a) => {
+    const detail = AppealsRepository.mergeAppeal(a.id);
     return `
-    <tr>
+    <tr data-appeal-id="${a.id}">
       <td><span class="ui-data-table__id">${a.id}</span></td>
-      <td class="ui-data-table__muted">—</td>
+      <td class="ui-data-table__muted">${detail?.client?.name || 'Нет данных'}</td>
       <td>${a.title}</td>
       <td>${renderStatusBadge(a.status)}</td>
-      <td>${renderPriorityBadge(priority)}</td>
-      <td class="ui-data-table__muted">—</td>
-      <td class="ui-data-table__muted">—</td>
+      <td>${renderPriorityBadge(a.priority)}</td>
+      <td class="ui-data-table__muted">${detail?.assignee || 'Не назначен'}</td>
+      <td class="ui-data-table__muted">${detail?.sla || 'Нет данных'}</td>
       <td class="ui-data-table__muted">${a.date}, ${a.time}</td>
-      <td><button type="button" class="ui-data-table__link" data-go="appeal-detail">Открыть</button></td>
+      <td><button type="button" class="ui-data-table__link" data-go="appeal-detail" data-appeal-id="${a.id}">Открыть</button></td>
     </tr>
   `;
   }).join('');
@@ -191,9 +108,49 @@ function switchView(viewId) {
   });
 }
 
+function parseRoute() {
+  const hash = location.hash.slice(1) || '/appeals';
+  const appealMatch = hash.match(/^\/appeals\/([^/?#]+)$/);
+  if (appealMatch) {
+    return { view: 'appeal-detail', appealId: decodeURIComponent(appealMatch[1]) };
+  }
+  if (hash === '/flow') return { view: 'flow' };
+  return { view: 'dashboard' };
+}
+
+function navigate(view, params = {}) {
+  if (view === 'appeal-detail' && params.appealId) {
+    location.hash = `/appeals/${encodeURIComponent(params.appealId)}`;
+    return;
+  }
+  if (view === 'flow') {
+    location.hash = '/flow';
+    return;
+  }
+  location.hash = '/appeals';
+}
+
+function handleRoute() {
+  const route = parseRoute();
+  switchView(route.view);
+
+  if (route.view === 'appeal-detail') {
+    AppealDetailPage.load(route.appealId);
+  }
+
+  if (route.view === 'flow') {
+    setFlowStep(1);
+    const uploadZone = document.getElementById('upload-zone');
+    const incomingPreview = document.getElementById('incoming-preview');
+    if (uploadZone) uploadZone.hidden = false;
+    if (incomingPreview) incomingPreview.hidden = true;
+  }
+}
+
 function setFlowStep(step) {
   document.querySelectorAll('.flow-panel').forEach((p) => p.classList.remove('flow-panel--active'));
-  document.getElementById(`flow-step-${step}`).classList.add('flow-panel--active');
+  const panel = document.getElementById(`flow-step-${step}`);
+  if (panel) panel.classList.add('flow-panel--active');
 
   document.querySelectorAll('.flow-step').forEach((s) => {
     const n = parseInt(s.dataset.step, 10);
@@ -221,11 +178,12 @@ function simulateAIProcessing() {
       lastItem.parentElement.appendChild(newItem);
 
       setTimeout(() => {
-        renderAppealCard(document.getElementById('new-appeal-card'), appealCardData);
+        renderFlowAppealCard(document.getElementById('new-appeal-card'), appealCardData);
         setFlowStep(3);
 
-        if (!appeals.find((a) => a.isNew)) {
-          appeals.unshift({
+        const list = AppealsRepository.getList();
+        if (!list.find((a) => a.isNew)) {
+          AppealsRepository.addAppeal({
             id: appealCardData.id,
             date: '29.07.2026',
             time: '12:14',
@@ -278,29 +236,33 @@ function initNavigation() {
   document.querySelectorAll('[data-view]').forEach((el) => {
     el.addEventListener('click', () => {
       if (el.disabled) return;
-      switchView(el.dataset.view);
-      if (el.dataset.view === 'flow') {
-        setFlowStep(1);
-        document.getElementById('upload-zone').hidden = false;
-        document.getElementById('incoming-preview').hidden = true;
-      }
+      if (el.dataset.view === 'flow') navigate('flow');
+      else navigate('dashboard');
     });
   });
 
   document.addEventListener('click', (e) => {
     const trigger = e.target.closest('[data-go]');
     if (!trigger) return;
-    switchView(trigger.dataset.go);
+    const view = trigger.dataset.go;
+    const appealId = trigger.dataset.appealId;
+    if (view === 'appeal-detail' && appealId) {
+      navigate('appeal-detail', { appealId });
+    } else {
+      navigate(view);
+    }
   });
 
   const tbody = document.getElementById('appeals-table-body');
   if (tbody) {
     tbody.addEventListener('click', (e) => {
       if (e.target.closest('[data-go]')) return;
-      const row = e.target.closest('tr');
-      if (row) switchView('appeal-detail');
+      const row = e.target.closest('tr[data-appeal-id]');
+      if (row) navigate('appeal-detail', { appealId: row.dataset.appealId });
     });
   }
+
+  window.addEventListener('hashchange', handleRoute);
 
   const resetBtn = document.getElementById('filters-reset');
   if (resetBtn) {
@@ -323,10 +285,12 @@ function initNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!location.hash) location.hash = '/appeals';
+
   setListState('loading');
   setTimeout(renderTable, 400);
 
-  renderAppealCard(document.getElementById('detail-appeal-card'), appealCardData, true);
   initFlow();
   initNavigation();
+  handleRoute();
 });

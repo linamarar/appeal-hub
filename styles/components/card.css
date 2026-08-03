@@ -1,0 +1,34 @@
+/* Figma: 🟢 Карточки / panel surface */
+
+.ui-card {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control-lg);
+  background: var(--color-background-surface);
+  overflow: hidden;
+}
+
+.ui-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  min-height: 52px;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ui-card__title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-heading-xs);
+  font-weight: var(--font-weight-heading-xs);
+  line-height: var(--line-height-heading-xs);
+  color: var(--color-text-primary);
+}
+
+.ui-card__body {
+  padding: var(--spacing-5);
+}
+
+.ui-card__body--compact {
+  padding: 0;
+}

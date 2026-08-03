@@ -16,8 +16,12 @@
   <link rel="stylesheet" href="styles/components/pagination.css" />
   <link rel="stylesheet" href="styles/components/avatar.css" />
   <link rel="stylesheet" href="styles/components/states.css" />
+  <link rel="stylesheet" href="styles/components/card.css" />
+  <link rel="stylesheet" href="styles/components/meta-list.css" />
+  <link rel="stylesheet" href="styles/components/timeline.css" />
   <link rel="stylesheet" href="styles/layout/shell.css" />
   <link rel="stylesheet" href="styles/pages/appeals-list.css" />
+  <link rel="stylesheet" href="styles/pages/appeal-detail.css" />
   <link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
@@ -317,90 +321,41 @@
 
             <div class="flow-actions">
               <button class="btn btn--secondary" data-go="dashboard">Перейти к списку</button>
-              <button class="btn btn--primary" data-go="appeal-detail">Открыть карточку</button>
+              <button class="btn btn--primary" data-go="appeal-detail" data-appeal-id="AH-2026-01847">Открыть карточку</button>
             </div>
           </div>
         </section>
 
-        <!-- Appeal detail: legacy -->
-        <section class="view view--legacy" id="view-appeal-detail">
-          <header class="page-header">
-            <div>
-              <button class="back-link" data-go="dashboard">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                Назад к списку
-              </button>
-              <h1>Обращение №AH-2026-01847</h1>
-              <p class="page-header__desc">Создано 29.07.2026 · Обработано AI за 1,4 мин</p>
+        <!-- Appeal detail -->
+        <section class="view" id="view-appeal-detail">
+          <div class="appeal-detail__state" id="appeal-detail-loading">
+            <div class="ui-loader">
+              <div class="ui-loader__spinner" role="status" aria-label="Загрузка"></div>
+              <p class="ui-loader__text">Загрузка обращения…</p>
             </div>
-            <div class="page-header__actions">
-              <button class="btn btn--secondary">Экспорт</button>
-              <button class="btn btn--primary">Назначить ответственного</button>
+          </div>
+
+          <div class="appeal-detail__state" id="appeal-detail-not-found">
+            <div class="ui-empty-state">
+              <div class="ui-empty-state__icon" aria-hidden="true">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <h2 class="ui-empty-state__title">Обращение не найдено</h2>
+              <p class="ui-empty-state__text">Проверьте номер обращения или вернитесь к списку.</p>
+              <button type="button" class="ui-button ui-button--secondary ui-button--md" data-go="dashboard">К списку обращений</button>
             </div>
-          </header>
+          </div>
 
-          <div class="detail-grid">
-            <div class="detail-main">
-              <div class="appeal-card appeal-card--full" id="detail-appeal-card"></div>
-
-              <div class="panel">
-                <div class="panel__header">
-                  <h2>Текст обращения</h2>
-                </div>
-                <div class="appeal-text">
-                  <p>Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг по адресу проживания. С 15.03.2026 наблюдаются перебои с горячим водоснабжением — горячая вода отсутствует более 8 часов в сутки.</p>
-                  <p>Обращался в управляющую компанию «ЖилКомСервис» неоднократно, однако проблема не решена. Прошу провести проверку и принять меры.</p>
-                </div>
-              </div>
-            </div>
-
-            <aside class="detail-sidebar">
-              <div class="panel">
-                <div class="panel__header"><h2>AI-обработка</h2></div>
-                <div class="meta-list">
-                  <div class="meta-list__item">
-                    <span class="meta-list__label">Статус AI</span>
-                    <span class="badge badge--success">Завершено</span>
-                  </div>
-                  <div class="meta-list__item">
-                    <span class="meta-list__label">Время обработки</span>
-                    <span>1 мин 24 сек</span>
-                  </div>
-                  <div class="meta-list__item">
-                    <span class="meta-list__label">Поля замаскированы</span>
-                    <span>5 из 5</span>
-                  </div>
-                  <div class="meta-list__item">
-                    <span class="meta-list__label">Уверенность AI</span>
-                    <span>97,3%</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel">
-                <div class="panel__header"><h2>История</h2></div>
-                <div class="timeline">
-                  <div class="timeline__item">
-                    <div class="timeline__time">12:14</div>
-                    <div class="timeline__text">Обращение создано из документа</div>
-                  </div>
-                  <div class="timeline__item">
-                    <div class="timeline__time">12:13</div>
-                    <div class="timeline__text">AI завершил обработку</div>
-                  </div>
-                  <div class="timeline__item">
-                    <div class="timeline__time">12:12</div>
-                    <div class="timeline__text">Документ поступил в систему</div>
-                  </div>
-                </div>
-              </div>
-            </aside>
+          <div class="appeal-detail__state" id="appeal-detail-loaded">
+            <div id="appeal-detail-content"></div>
           </div>
         </section>
       </div>
     </div>
   </div>
 
+  <script src="scripts/data/appeals-repository.js"></script>
+  <script src="scripts/appeal-detail.js"></script>
   <script src="scripts/app.js"></script>
 </body>
 </html>

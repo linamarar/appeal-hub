@@ -1,0 +1,38 @@
+/* Figma: List items key-value */
+
+.ui-meta-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ui-meta-list__item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-5);
+  min-height: 44px;
+  padding: var(--spacing-3) var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ui-meta-list__item:last-child {
+  border-bottom: none;
+}
+
+.ui-meta-list__label {
+  flex-shrink: 0;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-secondary);
+}
+
+.ui-meta-list__value {
+  text-align: right;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-primary);
+}
+
+.ui-meta-list__value--muted {
+  color: var(--color-text-secondary);
+}
