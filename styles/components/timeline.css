@@ -68,6 +68,41 @@
   font-weight: var(--font-weight-body-md);
 }
 
+.ui-timeline__item--system {
+  background: var(--color-background-surface-muted);
+}
+
+.ui-timeline__item--internal {
+  border-left: 3px solid var(--color-brand-primary);
+  padding-left: calc(var(--spacing-5) - 3px);
+}
+
+.ui-timeline__item--client {
+  border-left: 3px solid var(--color-status-info);
+  padding-left: calc(var(--spacing-5) - 3px);
+}
+
+.ui-timeline__attachments {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+}
+
+.ui-timeline__attachment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-link);
+  text-decoration: none;
+}
+
+.ui-timeline__attachment-link:hover {
+  text-decoration: underline;
+}
+
 .ui-timeline__item--user .ui-timeline__author {
   color: var(--color-text-primary);
 }

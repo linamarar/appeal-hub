@@ -3,6 +3,86 @@
  */
 
 const AppealsRepository = (() => {
+  function createInitialAttachment(appealId, legacy) {
+    const ext = getFileExtension(legacy.name);
+    return {
+      id: legacy.id || generateAttachmentId(),
+      appealId,
+      messageId: null,
+      name: legacy.name,
+      mimeType: EXTENSION_MIME_MAP[ext] || 'application/octet-stream',
+      size: typeof legacy.sizeBytes === 'number' ? legacy.sizeBytes : parseLegacySize(legacy.size),
+      createdAt: legacy.createdAt || legacy.date || new Date().toISOString(),
+      uploadedBy: legacy.uploadedBy || 'system',
+      uploadedByName: legacy.author || legacy.uploadedByName || 'Система',
+      visibility: legacy.visibility || MESSAGE_VISIBILITY.CLIENT,
+      mockUrl: `mock://${legacy.id || generateAttachmentId()}`,
+      status: ATTACHMENT_STATUS.READY,
+      source: legacy.source || (legacy.author === 'Система' ? 'initial' : 'client'),
+    };
+  }
+
+  function parseLegacySize(sizeStr) {
+    if (!sizeStr || typeof sizeStr !== 'string') return 0;
+    const normalized = sizeStr.replace(',', '.').toLowerCase();
+    const mb = normalized.match(/([\d.]+)\s*мб/);
+    if (mb) return Math.round(parseFloat(mb[1]) * 1024 * 1024);
+    const kb = normalized.match(/([\d.]+)\s*кб/);
+    if (kb) return Math.round(parseFloat(kb[1]) * 1024);
+    return 0;
+  }
+
+  function historyEventToMessage(event) {
+    const isComment = event.type === HISTORY_EVENT_TYPES.COMMENT_ADDED;
+    return {
+      id: event.id,
+      appealId: event.appealId,
+      type: isComment ? MESSAGE_TYPES.INTERNAL_COMMENT : MESSAGE_TYPES.SYSTEM_EVENT,
+      authorId: event.authorId || null,
+      authorName: event.actor || 'Система',
+      authorRole: event.kind === 'system' ? 'Система' : null,
+      text: event.description || '',
+      createdAt: event.createdAt,
+      visibility: isComment ? MESSAGE_VISIBILITY.INTERNAL : MESSAGE_VISIBILITY.INTERNAL,
+      attachments: event.attachmentIds || [],
+      eventType: event.type,
+      oldValue: event.oldValue || null,
+      newValue: event.newValue || null,
+      reason: event.reason || null,
+    };
+  }
+
+  function ensureMessages(record) {
+    if (!record.messages) record.messages = [];
+    if (record._messagesMerged) return record.messages;
+
+    const historyMessages = (record.history || []).map(historyEventToMessage);
+    const existingKeys = new Set(
+      record.messages.map((m) => `${m.type}:${m.createdAt}:${m.text}:${m.eventType || ''}`)
+    );
+
+    for (const hm of historyMessages) {
+      const key = `${hm.type}:${hm.createdAt}:${hm.text}:${hm.eventType || ''}`;
+      if (!existingKeys.has(key)) {
+        record.messages.push(hm);
+        existingKeys.add(key);
+      }
+    }
+
+    record._messagesMerged = true;
+    return record.messages;
+  }
+
+  function ensureAttachments(record) {
+    if (record.attachmentsNormalized) return record.attachments;
+    const normalized = (record.attachments || []).map((a) =>
+      a.mimeType ? a : createInitialAttachment(record.id, a)
+    );
+    record.attachments = normalized;
+    record.attachmentsNormalized = true;
+    return record.attachments;
+  }
+
   const records = {
     'AH-2026-01847': {
       id: 'AH-2026-01847',
@@ -24,7 +104,21 @@ const AppealsRepository = (() => {
       initiator: 'Иванов Иван Петрович',
       description: 'Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг по адресу проживания. С 15.03.2026 наблюдаются перебои с горячим водоснабжением — горячая вода отсутствует более 8 часов в сутки.\n\nОбращался в управляющую компанию «ЖилКомСервис» неоднократно, однако проблема не решена. Прошу провести проверку и принять меры.',
       client: { name: 'Иванов Иван Петрович', phone: '+7 (916) 123-45-67', email: 'ivanov.ip@mail.ru', type: 'Физическое лицо', appealsCount: 3 },
-      attachments: [{ id: 'att-1', name: 'Обращение_№1847.pdf', type: 'PDF', size: '2,4 МБ', date: '29.07.2026', author: 'Система' }],
+      attachments: [{ id: 'att-1', name: 'Обращение_№1847.pdf', type: 'PDF', size: '2,4 МБ', date: '29.07.2026', author: 'Система', createdAt: '2026-07-29T12:12:00+04:00' }],
+      messages: [
+        {
+          id: 'msg-client-1847-1',
+          appealId: 'AH-2026-01847',
+          type: MESSAGE_TYPES.CLIENT_MESSAGE,
+          authorId: 'client-ivanov',
+          authorName: 'Иванов Иван Петрович',
+          authorRole: 'Клиент',
+          text: 'Добрый день! Прошу ускорить рассмотрение обращения — проблема с горячей водой сохраняется.',
+          createdAt: '2026-07-30T09:30:00+04:00',
+          visibility: MESSAGE_VISIBILITY.CLIENT,
+          attachments: [],
+        },
+      ],
       history: [
         { id: 'h1', appealId: 'AH-2026-01847', type: 'CREATED', actor: 'Система', createdAt: '2026-07-29T12:12:00+04:00', description: 'Обращение создано из документа', kind: 'system' },
       ],
@@ -51,10 +145,37 @@ const AppealsRepository = (() => {
       description: 'Жалоба на длительное ожидание в очереди и некорректную консультацию сотрудника МФЦ «Мои документы» на ул. Профсоюзная.',
       client: { name: 'Петрова Анна Сергеевна', phone: '+7 (903) 555-12-34', email: 'petrova.as@mail.ru', type: 'Физическое лицо' },
       attachments: [],
+      messages: [
+        {
+          id: 'msg-client-1846-1',
+          appealId: 'AH-2026-01846',
+          type: MESSAGE_TYPES.CLIENT_MESSAGE,
+          authorId: 'client-petrova',
+          authorName: 'Петрова Анна Сергеевна',
+          authorRole: 'Клиент',
+          text: 'Жду ответа по телефону, как указано в обращении.',
+          createdAt: '2026-08-02T11:05:00+04:00',
+          visibility: MESSAGE_VISIBILITY.CLIENT,
+          attachments: [],
+        },
+        {
+          id: 'msg-internal-1846-1',
+          appealId: 'AH-2026-01846',
+          type: MESSAGE_TYPES.INTERNAL_COMMENT,
+          authorId: 'user-admin',
+          authorName: 'Администратор',
+          authorRole: 'Администратор',
+          text: 'Проверить запись с камер наблюдения в МФЦ за указанную дату.',
+          createdAt: '2026-08-02T11:18:00+04:00',
+          visibility: MESSAGE_VISIBILITY.INTERNAL,
+          attachments: [],
+        },
+      ],
       history: [
         { id: 'h1', appealId: 'AH-2026-01846', type: 'CREATED', actor: 'Система', createdAt: '2026-08-02T11:02:00+04:00', description: 'Обращение создано', kind: 'system' },
         { id: 'h2', appealId: 'AH-2026-01846', type: 'ASSIGNEE_ASSIGNED', actor: 'Администратор', createdAt: '2026-08-02T11:15:00+04:00', oldValue: 'Не назначен', newValue: 'Сидорова М.В.', description: 'Назначен исполнитель', kind: 'user' },
         { id: 'h3', appealId: 'AH-2026-01846', type: 'STATUS_CHANGED', actor: 'Администратор', createdAt: '2026-08-02T11:16:00+04:00', oldValue: 'Новая', newValue: 'Назначена исполнителю', description: 'Статус изменён', kind: 'user' },
+        { id: 'h4', appealId: 'AH-2026-01846', type: 'COMMENT_ADDED', actor: 'Администратор', createdAt: '2026-08-02T11:18:00+04:00', description: 'Проверить запись с камер наблюдения в МФЦ за указанную дату.', kind: 'internal' },
       ],
     },
     'AH-2026-01845': {
@@ -76,7 +197,8 @@ const AppealsRepository = (() => {
       region: 'Московская область',
       description: 'Нарушение сроков строительства многоквартирного дома по адресу ул. Строителей, 5.',
       client: { name: 'Козлов Дмитрий Александрович', type: 'Физическое лицо' },
-      attachments: [{ id: 'att-1', name: 'Фото_стройплощадки.jpg', type: 'JPG', size: '890 КБ', date: '28.07.2026', author: 'Козлов Д.А.' }],
+      attachments: [{ id: 'att-1', name: 'Фото_стройплощадки.jpg', type: 'JPG', size: '890 КБ', date: '28.07.2026', author: 'Козлов Д.А.', createdAt: '2026-07-28T16:44:00+04:00', source: 'client' }],
+      messages: [],
       history: [
         { id: 'h1', appealId: 'AH-2026-01845', type: 'CREATED', actor: 'Система', createdAt: '2026-07-28T16:45:00+04:00', description: 'Обращение создано', kind: 'system' },
         { id: 'h2', appealId: 'AH-2026-01845', type: 'STATUS_CHANGED', actor: 'Иванова Е.К.', createdAt: '2026-07-28T18:00:00+04:00', oldValue: 'В работе', newValue: 'Закрыта', description: 'Статус изменён', kind: 'user' },
@@ -101,6 +223,7 @@ const AppealsRepository = (() => {
       description: 'Проблема с начислением пенсии за июнь 2026 года.',
       client: { name: 'Смирнова Людмила Григорьевна', phone: '+7 (495) 111-22-33', type: 'Физическое лицо', appealsCount: 1 },
       attachments: [],
+      messages: [],
       history: [
         { id: 'h1', appealId: 'AH-2026-01844', type: 'CREATED', actor: 'Система', createdAt: '2026-07-28T14:20:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
@@ -124,6 +247,7 @@ const AppealsRepository = (() => {
       description: 'Незаконная реклама на фасаде жилого дома.',
       client: null,
       attachments: [],
+      messages: [],
       history: [
         { id: 'h1', appealId: 'AH-2026-01843', type: 'CREATED', actor: 'Система', createdAt: '2026-07-28T09:15:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
@@ -147,14 +271,28 @@ const AppealsRepository = (() => {
       description: 'Шум от проведения ремонтных работ в вечернее время.',
       client: { name: 'Новикова Ольга Романовна', email: 'novikova@inbox.ru', type: 'Физическое лицо' },
       attachments: [],
+      messages: [],
       history: [
         { id: 'h1', appealId: 'AH-2026-01842', type: 'CREATED', actor: 'Система', createdAt: '2026-07-27T17:30:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
     },
   };
 
+  function cloneRecord(record) {
+    if (!record) return null;
+    ensureMessages(record);
+    ensureAttachments(record);
+    return {
+      ...record,
+      attachments: record.attachments.map((a) => ({ ...a })),
+      messages: record.messages.map((m) => ({ ...m, attachments: [...(m.attachments || [])] })),
+      history: [...record.history],
+    };
+  }
+
   function getRawById(id) {
-    return records[id] ? { ...records[id], history: [...records[id].history] } : null;
+    const record = records[id];
+    return record ? cloneRecord(record) : null;
   }
 
   function saveRecord(record) {
@@ -176,8 +314,26 @@ const AppealsRepository = (() => {
     });
   }
 
+  function pushMessage(record, message) {
+    ensureMessages(record);
+    record.messages.push(message);
+  }
+
+  function pushAttachment(record, attachment) {
+    ensureAttachments(record);
+    record.attachments.push(attachment);
+  }
+
+  function getMessages(record) {
+    return ensureMessages(record);
+  }
+
+  function getAttachments(record) {
+    return ensureAttachments(record);
+  }
+
   function getList() {
-    return Object.values(records).map((r) => ({ ...r }));
+    return Object.values(records).map((r) => cloneRecord(r));
   }
 
   function getById(id, delayMs = 200) {
@@ -189,6 +345,7 @@ const AppealsRepository = (() => {
   function addAppealFromFlow(appealCard) {
     const id = appealCard.id;
     if (records[id]) return records[id];
+    const now = new Date().toISOString();
     records[id] = {
       id,
       title: appealCard.title,
@@ -198,8 +355,8 @@ const AppealsRepository = (() => {
       statusCode: 'NEW',
       assigneeId: null,
       assigneeGroup: 'Не указано',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
       slaDueAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       slaState: null,
       source: appealCard.source || 'PDF-документ',
@@ -209,9 +366,11 @@ const AppealsRepository = (() => {
       description: 'Нет данных',
       client: null,
       attachments: [],
-      history: [{ id: 'h-new', appealId: id, type: 'CREATED', actor: 'Система', createdAt: new Date().toISOString(), description: 'Обращение создано из документа', kind: 'system' }],
+      messages: [],
+      history: [{ id: 'h-new', appealId: id, type: 'CREATED', actor: 'Система', createdAt: now, description: 'Обращение создано из документа', kind: 'system' }],
       isNew: true,
     };
+    ensureMessages(records[id]);
     return records[id];
   }
 
@@ -222,6 +381,13 @@ const AppealsRepository = (() => {
     saveRecord,
     touchUpdatedAt,
     pushHistory,
+    pushMessage,
+    pushAttachment,
+    getMessages,
+    getAttachments,
+    ensureMessages,
+    ensureAttachments,
     addAppealFromFlow,
+    historyEventToMessage,
   };
 })();

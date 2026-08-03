@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="styles/foundations/typography.css" />
   <link rel="stylesheet" href="styles/components/button.css" />
   <link rel="stylesheet" href="styles/components/input.css" />
+  <link rel="stylesheet" href="styles/components/file-uploader.css" />
+  <link rel="stylesheet" href="styles/components/file-item.css" />
   <link rel="stylesheet" href="styles/components/select.css" />
   <link rel="stylesheet" href="styles/components/badge.css" />
   <link rel="stylesheet" href="styles/components/table.css" />
@@ -19,6 +21,7 @@
   <link rel="stylesheet" href="styles/components/card.css" />
   <link rel="stylesheet" href="styles/components/meta-list.css" />
   <link rel="stylesheet" href="styles/components/timeline.css" />
+  <link rel="stylesheet" href="styles/components/modal.css" />
   <link rel="stylesheet" href="styles/layout/shell.css" />
   <link rel="stylesheet" href="styles/pages/appeals-list.css" />
   <link rel="stylesheet" href="styles/pages/appeal-detail.css" />
@@ -363,7 +366,46 @@
     </div>
   </div>
 
+  <div class="ui-modal" id="assign-modal" aria-hidden="true" role="dialog" aria-labelledby="assign-modal-title">
+    <div class="ui-modal__backdrop" data-modal-close></div>
+    <div class="ui-modal__dialog">
+      <div class="ui-modal__header">
+        <h2 class="ui-modal__title" id="assign-modal-title">Назначить исполнителя</h2>
+        <button type="button" class="ui-button ui-button--ghost ui-button--sm" data-modal-close aria-label="Закрыть">✕</button>
+      </div>
+      <div class="ui-modal__body">
+        <label class="ui-field">
+          <span class="ui-field__label">Исполнитель</span>
+          <select class="ui-select" id="assign-user-select"></select>
+        </label>
+        <div id="reassign-reason-field" hidden>
+          <label class="ui-field">
+            <span class="ui-field__label">Причина переназначения</span>
+            <select class="ui-select" id="reassign-reason-select"></select>
+          </label>
+        </div>
+        <div id="reassign-other-field" hidden>
+          <label class="ui-field">
+            <span class="ui-field__label">Текст причины</span>
+            <textarea class="ui-textarea" id="reassign-other-text" rows="2"></textarea>
+          </label>
+        </div>
+        <div class="ui-alert ui-alert--error" id="assign-modal-error" hidden></div>
+      </div>
+      <div class="ui-modal__footer">
+        <button type="button" class="ui-button ui-button--secondary ui-button--md" data-modal-close>Отмена</button>
+        <button type="button" class="ui-button ui-button--primary ui-button--md" id="assign-modal-submit">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/data/status-catalog.js"></script>
+  <script src="scripts/data/users-mock.js"></script>
+  <script src="scripts/data/message-constants.js"></script>
   <script src="scripts/data/appeals-repository.js"></script>
+  <script src="scripts/services/sla-service.js"></script>
+  <script src="scripts/services/permissions.js"></script>
+  <script src="scripts/services/appeals-service.js"></script>
   <script src="scripts/appeal-detail.js"></script>
   <script src="scripts/app.js"></script>
 </body>

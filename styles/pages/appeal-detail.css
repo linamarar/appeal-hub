@@ -255,6 +255,29 @@
   color: var(--color-text-muted);
 }
 
+.ui-attachment-list__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  align-items: center;
+}
+
+.ui-attachment-list__source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 2px var(--spacing-2);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  background: var(--color-background-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.appeal-detail__comment-error {
+  margin-top: var(--spacing-1);
+}
+
 .ui-comment-form__actions {
   display: flex;
   justify-content: flex-end;

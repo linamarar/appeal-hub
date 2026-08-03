@@ -16,7 +16,15 @@ const CURRENT_USER = {
   name: 'Администратор',
   role: 'Администратор',
   department: 'Операционный центр',
-  permissions: ['appeal.accept', 'appeal.changeStatus', 'appeal.assign', 'appeal.reassign'],
+  permissions: [
+    'appeal.accept',
+    'appeal.changeStatus',
+    'appeal.assign',
+    'appeal.reassign',
+    'appeal.addInternalComment',
+    'appeal.addAttachment',
+    'appeal.viewInternalComments',
+  ],
 };
 
 function getActiveUsers() {
