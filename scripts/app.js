@@ -183,7 +183,11 @@ function initSidebarToggle() {
     if (label) label.textContent = collapsed ? 'Развернуть' : 'Свернуть';
     try { localStorage.setItem(storageKey, collapsed ? '1' : '0'); } catch (_) {}
   }
-  try { if (localStorage.getItem(storageKey) === '1') setCollapsed(true); } catch (_) {}
+  try {
+    const stored = localStorage.getItem(storageKey);
+    if (stored === '1') setCollapsed(true);
+    else if (stored === null && window.matchMedia('(max-width: 1024px)').matches) setCollapsed(true);
+  } catch (_) {}
   toggle.addEventListener('click', () => setCollapsed(!shell.classList.contains('app-shell--sidebar-collapsed')));
 }
 

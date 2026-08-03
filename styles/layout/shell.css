@@ -265,38 +265,6 @@
 }
 
 @media (max-width: 1024px) {
-  .shell-sidebar {
-    width: 72px;
-    padding-inline: var(--spacing-3);
-  }
-
-  .shell-sidebar__brand-text,
-  .shell-nav__item span,
-  .shell-sidebar__meta,
-  .shell-sidebar__version,
-  .shell-sidebar__toggle span {
-    display: none;
-  }
-
-  .shell-sidebar__brand {
-    align-items: center;
-    padding-inline: 0;
-  }
-
-  .shell-sidebar__logo {
-    height: 24px;
-  }
-
-  .shell-nav__item {
-    justify-content: center;
-    padding-inline: var(--spacing-3);
-  }
-
-  .shell-sidebar__toggle {
-    justify-content: center;
-    padding-inline: var(--spacing-3);
-  }
-
   .shell-content {
     padding: var(--spacing-5);
   }
