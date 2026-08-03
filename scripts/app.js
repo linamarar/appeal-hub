@@ -243,6 +243,8 @@ function initSidebarToggle() {
     shell.classList.toggle('app-shell--sidebar-collapsed', collapsed);
     toggle.setAttribute('aria-expanded', String(!collapsed));
     toggle.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+    const label = toggle.querySelector('span');
+    if (label) label.textContent = collapsed ? 'Развернуть' : 'Свернуть';
     try {
       localStorage.setItem(storageKey, collapsed ? '1' : '0');
     } catch (_) { /* ignore */ }

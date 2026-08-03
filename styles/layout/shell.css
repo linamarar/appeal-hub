@@ -101,11 +101,57 @@
   cursor: not-allowed;
 }
 
-.shell-sidebar__footer {
+.shell-sidebar__bottom {
+  margin-top: auto;
   padding-top: var(--spacing-5);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shell-sidebar__version {
+  padding: 0 var(--spacing-4) var(--spacing-3);
   font-size: var(--font-size-body-md);
   color: var(--color-text-inverse-muted);
+}
+
+.shell-sidebar__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: none;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text-inverse-muted);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-body-md);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.shell-sidebar__toggle:hover {
+  background: var(--color-grey-jet);
+  color: var(--color-text-inverse);
+}
+
+.shell-sidebar__toggle:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.shell-sidebar__toggle-icon--expand {
+  display: none;
+}
+
+.app-shell--sidebar-collapsed .shell-sidebar__toggle-icon--collapse {
+  display: none;
+}
+
+.app-shell--sidebar-collapsed .shell-sidebar__toggle-icon--expand {
+  display: block;
 }
 
 .shell-body {
@@ -124,25 +170,6 @@
   padding: 0 var(--spacing-8);
   border-bottom: 1px solid var(--color-border-subtle);
   background: var(--color-background-surface);
-}
-
-.shell-header__start {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  min-width: 0;
-}
-
-.shell-header__toggle-icon--expand {
-  display: none;
-}
-
-.app-shell--sidebar-collapsed .shell-header__toggle-icon--collapse {
-  display: none;
-}
-
-.app-shell--sidebar-collapsed .shell-header__toggle-icon--expand {
-  display: block;
 }
 
 .shell-header__product {
@@ -211,7 +238,8 @@
 .app-shell--sidebar-collapsed .shell-sidebar__brand-text,
 .app-shell--sidebar-collapsed .shell-sidebar__subtitle,
 .app-shell--sidebar-collapsed .shell-nav__item span,
-.app-shell--sidebar-collapsed .shell-sidebar__footer {
+.app-shell--sidebar-collapsed .shell-sidebar__version,
+.app-shell--sidebar-collapsed .shell-sidebar__toggle span {
   display: none;
 }
 
@@ -229,6 +257,11 @@
   padding-inline: var(--spacing-3);
 }
 
+.app-shell--sidebar-collapsed .shell-sidebar__toggle {
+  justify-content: center;
+  padding-inline: var(--spacing-3);
+}
+
 @media (max-width: 1024px) {
   .shell-sidebar {
     width: 72px;
@@ -238,7 +271,8 @@
   .shell-sidebar__brand-text,
   .shell-sidebar__subtitle,
   .shell-nav__item span,
-  .shell-sidebar__footer {
+  .shell-sidebar__version,
+  .shell-sidebar__toggle span {
     display: none;
   }
 
@@ -256,8 +290,9 @@
     padding-inline: var(--spacing-3);
   }
 
-  .shell-header__toggle {
-    display: none;
+  .shell-sidebar__toggle {
+    justify-content: center;
+    padding-inline: var(--spacing-3);
   }
 
   .shell-content {
