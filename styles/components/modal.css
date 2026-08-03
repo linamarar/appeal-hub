@@ -1,0 +1,91 @@
+/* Figma: Modal pattern */
+
+.ui-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-5);
+}
+
+.ui-modal.is-open {
+  display: flex;
+}
+
+.ui-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.45);
+}
+
+.ui-modal__dialog {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: calc(100vh - var(--spacing-10));
+  overflow: auto;
+  border-radius: var(--radius-control-lg);
+  background: var(--color-background-surface);
+  box-shadow: var(--shadow-elevation-sm);
+}
+
+.ui-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ui-modal__title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-heading-xs);
+  font-weight: var(--font-weight-heading-xs);
+  color: var(--color-text-primary);
+}
+
+.ui-modal__body {
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.ui-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--spacing-5);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ui-field__error {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  color: var(--color-status-danger);
+}
+
+.ui-alert {
+  padding: var(--spacing-4);
+  border-radius: var(--radius-control);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+}
+
+.ui-alert--error {
+  background: rgba(230, 66, 66, 0.08);
+  color: var(--color-status-danger);
+  border: 1px solid rgba(230, 66, 66, 0.2);
+}
+
+.appeal-detail__action-error {
+  width: 100%;
+  margin-top: var(--spacing-2);
+}
+
+.appeal-detail__actions .ui-button.is-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}

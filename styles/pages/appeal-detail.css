@@ -96,6 +96,28 @@
   color: var(--color-brand-primary-fill);
 }
 
+.ui-sla-badge--success {
+  background: rgba(20, 117, 70, 0.1);
+  color: var(--color-status-success);
+}
+
+.ui-sla-badge--danger {
+  background: rgba(230, 66, 66, 0.1);
+  color: var(--color-status-danger);
+}
+
+.ui-sla-badge--neutral {
+  background: var(--color-background-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.appeal-detail__sla-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  align-items: flex-end;
+}
+
 .appeal-detail__meta-row {
   display: flex;
   flex-wrap: wrap;

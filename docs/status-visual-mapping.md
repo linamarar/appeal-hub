@@ -1,7 +1,7 @@
 # Сопоставление статусов обращений с визуальными вариантами Figma
 
-> Модель данных прототипа: `Новое`, `В работе`, `Закрыто`.  
-> Расширенная продуктовая модель (9 статусов) — визуально подготовлена через семантические badge variants.
+> Единый справочник: `scripts/data/status-catalog.js` (`APPEAL_STATUSES`).  
+> Системные идентификаторы — коды (`NEW`, `IN_PROGRESS`, …), не русские строки.
 
 ## Семантические variants (Figma Offer / Pins, theme=light)
 
@@ -13,29 +13,37 @@
 | success | `ui-status-badge--success` | `--color-status-success` @ 10% |
 | danger | `ui-status-badge--danger` | `--color-status-danger` @ 10% |
 
-## Расширенная модель → variant
+## Код статуса → variant
 
-| Статус (extended) | Variant | Label в UI (при наличии данных) |
+| Код | Label | Variant |
 |---|---|---|
-| Новая | warning | Новая |
-| На проверке системой | info | На проверке системой |
-| Назначена исполнителю | info | Назначена исполнителю |
-| В работе | info | В работе |
-| Ожидает ответа специалиста | warning | Ожидает ответа специалиста |
-| Ожидает ответа клиента | warning | Ожидает ответа клиента |
-| Ответ отправлен | success | Ответ отправлен |
-| Закрыта | success | Закрыта |
-| Возвращена в работу | danger | Возвращена в работу |
+| NEW | Новая | warning |
+| SYSTEM_REVIEW | На проверке системой | info |
+| ASSIGNED | Назначена исполнителю | info |
+| IN_PROGRESS | В работе | info |
+| WAITING_SPECIALIST | Ожидает ответа специалиста | warning |
+| WAITING_CLIENT | Ожидает ответа клиента | warning |
+| RESPONSE_SENT | Ответ отправлен | success |
+| CLOSED | Закрыта | success |
+| REOPENED | Возвращена в работу | danger |
 
-## Текущие данные прототипа → variant
+## SLA indicator variants
 
-| Статус в mock (`appeals`) | Отображаемый label | Variant |
+| SLA code | Label | CSS class |
 |---|---|---|
-| Новое | Новая | warning |
-| В работе | В работе | info |
-| Закрыто | Закрыта | success |
+| ON_TRACK | В срок | `ui-sla-badge--success` |
+| AT_RISK | Срок приближается | `ui-sla-badge--warning` |
+| OVERDUE | Просрочено | `ui-sla-badge--danger` |
+| PAUSED | Приостановлено | `ui-sla-badge--neutral` |
 
-## Ограничения этапа
+## Mock-данные (начальные statusCode)
 
-- Бизнес-модель статусов **не расширялась** — mapping зафиксирован для следующего этапа.
-- Отдельный AI-status badge в таблице **не выводится** (колонка убрана в пользу product admin columns); AI-status сохранён в mock и legacy views.
+| ID | statusCode | Назначение для тестов |
+|---|---|---|
+| AH-2026-01847 | NEW | Назначение исполнителя |
+| AH-2026-01846 | ASSIGNED | Принять в работу, AT_RISK SLA |
+| AH-2026-01844 | IN_PROGRESS | OVERDUE SLA |
+| AH-2026-01843 | NEW | PAUSED SLA |
+| AH-2026-01845, 01842 | CLOSED | Завершённые |
+
+Подробнее: `docs/appeal-status-and-sla.md`, `docs/status-transition-matrix.md`.

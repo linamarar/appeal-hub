@@ -1,99 +1,100 @@
 /**
- * Mock repository — обращения, детали, история, комментарии (in-memory).
+ * Mock repository — хранение обращений (in-memory, session).
  */
 
 const AppealsRepository = (() => {
-  const list = [
-    { id: 'AH-2026-01847', date: '29.07.2026', time: '12:14', title: 'Некачественное предоставление коммунальных услуг', category: 'ЖКХ', aiStatus: 'Обработано', status: 'Новое', isNew: true },
-    { id: 'AH-2026-01846', date: '29.07.2026', time: '11:02', title: 'Жалоба на работу МФЦ', category: 'Госуслуги', aiStatus: 'Обработано', status: 'В работе' },
-    { id: 'AH-2026-01845', date: '28.07.2026', time: '16:45', title: 'Нарушение сроков строительства', category: 'Строительство', aiStatus: 'Обработано', status: 'Закрыто' },
-    { id: 'AH-2026-01844', date: '28.07.2026', time: '14:20', title: 'Проблема с начислением пенсии', category: 'Соцзащита', aiStatus: 'Обработано', status: 'В работе' },
-    { id: 'AH-2026-01843', date: '28.07.2026', time: '09:15', title: 'Незаконная реклама на фасаде', category: 'Градостроительство', aiStatus: 'Обработка', status: 'Новое' },
-    { id: 'AH-2026-01842', date: '27.07.2026', time: '17:30', title: 'Шум от проведения ремонтных работ', category: 'ЖКХ', aiStatus: 'Обработано', status: 'Закрыто' },
-  ];
-
-  const priorities = ['Высокий', 'Обычный', 'Низкий', 'Критический', 'Обычный', 'Низкий'];
-
-  const details = {
+  const records = {
     'AH-2026-01847': {
-      updatedDate: '29.07.2026',
-      updatedTime: '12:14',
-      sla: '2 дн.',
-      assignee: 'Не назначен',
+      id: 'AH-2026-01847',
+      title: 'Некачественное предоставление коммунальных услуг',
+      category: 'ЖКХ',
+      aiStatus: 'Обработано',
+      priority: 'Высокий',
+      statusCode: 'NEW',
+      assigneeId: null,
       assigneeGroup: 'ЖКХ — 1 линия',
+      createdAt: '2026-07-29T12:14:00+04:00',
+      updatedAt: '2026-07-29T12:14:00+04:00',
+      slaDueAt: '2026-08-10T12:14:00+04:00',
+      slaState: null,
       source: 'PDF-документ',
       channel: 'Портал госуслуг',
       responseFormat: 'Email',
       region: 'г. Москва',
       initiator: 'Иванов Иван Петрович',
       description: 'Прошу рассмотреть вопрос о некачественном предоставлении коммунальных услуг по адресу проживания. С 15.03.2026 наблюдаются перебои с горячим водоснабжением — горячая вода отсутствует более 8 часов в сутки.\n\nОбращался в управляющую компанию «ЖилКомСервис» неоднократно, однако проблема не решена. Прошу провести проверку и принять меры.',
-      client: {
-        name: 'Иванов Иван Петрович',
-        phone: '+7 (916) 123-45-67',
-        email: 'ivanov.ip@mail.ru',
-        type: 'Физическое лицо',
-        appealsCount: 3,
-      },
-      attachments: [
-        { id: 'att-1', name: 'Обращение_№1847.pdf', type: 'PDF', size: '2,4 МБ', date: '29.07.2026', author: 'Система' },
-      ],
+      client: { name: 'Иванов Иван Петрович', phone: '+7 (916) 123-45-67', email: 'ivanov.ip@mail.ru', type: 'Физическое лицо', appealsCount: 3 },
+      attachments: [{ id: 'att-1', name: 'Обращение_№1847.pdf', type: 'PDF', size: '2,4 МБ', date: '29.07.2026', author: 'Система' }],
       history: [
-        { id: 'h1', type: 'created', kind: 'system', author: 'Система', datetime: '29.07.2026 12:12', description: 'Обращение создано из документа' },
-        { id: 'h2', type: 'status_changed', kind: 'system', author: 'AI', datetime: '29.07.2026 12:13', description: 'Статус изменён', oldValue: '—', newValue: 'Новая' },
-        { id: 'h3', type: 'attachment', kind: 'system', author: 'Система', datetime: '29.07.2026 12:12', description: 'Добавлено вложение «Обращение_№1847.pdf»' },
+        { id: 'h1', appealId: 'AH-2026-01847', type: 'CREATED', actor: 'Система', createdAt: '2026-07-29T12:12:00+04:00', description: 'Обращение создано из документа', kind: 'system' },
       ],
+      isNew: true,
     },
     'AH-2026-01846': {
-      updatedDate: '29.07.2026',
-      updatedTime: '11:45',
-      sla: '1 дн.',
-      assignee: 'Сидорова М.В.',
+      id: 'AH-2026-01846',
+      title: 'Жалоба на работу МФЦ',
+      category: 'Госуслуги',
+      aiStatus: 'Обработано',
+      priority: 'Обычный',
+      statusCode: 'ASSIGNED',
+      assigneeId: 'user-001',
       assigneeGroup: 'Госуслуги — операторы',
+      createdAt: '2026-08-02T11:02:00+04:00',
+      updatedAt: '2026-08-02T11:20:00+04:00',
+      slaDueAt: '2026-08-03T15:00:00+04:00',
+      slaState: null,
       source: 'Веб-форма',
       channel: 'Сайт',
       responseFormat: 'Телефон',
       region: 'г. Москва',
       initiator: 'Петрова Анна Сергеевна',
       description: 'Жалоба на длительное ожидание в очереди и некорректную консультацию сотрудника МФЦ «Мои документы» на ул. Профсоюзная.',
-      client: {
-        name: 'Петрова Анна Сергеевна',
-        phone: '+7 (903) 555-12-34',
-        email: 'petrova.as@mail.ru',
-        type: 'Физическое лицо',
-      },
+      client: { name: 'Петрова Анна Сергеевна', phone: '+7 (903) 555-12-34', email: 'petrova.as@mail.ru', type: 'Физическое лицо' },
       attachments: [],
       history: [
-        { id: 'h1', type: 'created', kind: 'system', author: 'Система', datetime: '29.07.2026 11:02', description: 'Обращение создано' },
-        { id: 'h2', type: 'assignee_changed', kind: 'system', author: 'Администратор', datetime: '29.07.2026 11:15', description: 'Назначен исполнитель', oldValue: 'Не назначен', newValue: 'Сидорова М.В.' },
-        { id: 'h3', type: 'status_changed', kind: 'system', author: 'Сидорова М.В.', datetime: '29.07.2026 11:20', description: 'Статус изменён', oldValue: 'Новая', newValue: 'В работе' },
+        { id: 'h1', appealId: 'AH-2026-01846', type: 'CREATED', actor: 'Система', createdAt: '2026-08-02T11:02:00+04:00', description: 'Обращение создано', kind: 'system' },
+        { id: 'h2', appealId: 'AH-2026-01846', type: 'ASSIGNEE_ASSIGNED', actor: 'Администратор', createdAt: '2026-08-02T11:15:00+04:00', oldValue: 'Не назначен', newValue: 'Сидорова М.В.', description: 'Назначен исполнитель', kind: 'user' },
+        { id: 'h3', appealId: 'AH-2026-01846', type: 'STATUS_CHANGED', actor: 'Администратор', createdAt: '2026-08-02T11:16:00+04:00', oldValue: 'Новая', newValue: 'Назначена исполнителю', description: 'Статус изменён', kind: 'user' },
       ],
     },
     'AH-2026-01845': {
-      updatedDate: '28.07.2026',
-      updatedTime: '18:00',
-      sla: 'Нет данных',
-      assignee: 'Иванова Е.К.',
+      id: 'AH-2026-01845',
+      title: 'Нарушение сроков строительства',
+      category: 'Строительство',
+      aiStatus: 'Обработано',
+      priority: 'Низкий',
+      statusCode: 'CLOSED',
+      assigneeId: 'user-002',
       assigneeGroup: 'Строительный надзор',
+      createdAt: '2026-07-28T16:45:00+04:00',
+      updatedAt: '2026-07-28T18:00:00+04:00',
+      slaDueAt: '2026-08-01T16:45:00+04:00',
+      slaState: null,
       source: 'Email',
       channel: 'Почта',
       responseFormat: 'Email',
       region: 'Московская область',
       description: 'Нарушение сроков строительства многоквартирного дома по адресу ул. Строителей, 5.',
       client: { name: 'Козлов Дмитрий Александрович', type: 'Физическое лицо' },
-      attachments: [
-        { id: 'att-1', name: 'Фото_стройплощадки.jpg', type: 'JPG', size: '890 КБ', date: '28.07.2026', author: 'Козлов Д.А.' },
-      ],
+      attachments: [{ id: 'att-1', name: 'Фото_стройплощадки.jpg', type: 'JPG', size: '890 КБ', date: '28.07.2026', author: 'Козлов Д.А.' }],
       history: [
-        { id: 'h1', type: 'created', kind: 'system', author: 'Система', datetime: '28.07.2026 16:45', description: 'Обращение создано' },
-        { id: 'h2', type: 'status_changed', kind: 'system', author: 'Иванова Е.К.', datetime: '28.07.2026 18:00', description: 'Статус изменён', oldValue: 'В работе', newValue: 'Закрыта' },
+        { id: 'h1', appealId: 'AH-2026-01845', type: 'CREATED', actor: 'Система', createdAt: '2026-07-28T16:45:00+04:00', description: 'Обращение создано', kind: 'system' },
+        { id: 'h2', appealId: 'AH-2026-01845', type: 'STATUS_CHANGED', actor: 'Иванова Е.К.', createdAt: '2026-07-28T18:00:00+04:00', oldValue: 'В работе', newValue: 'Закрыта', description: 'Статус изменён', kind: 'user' },
       ],
     },
     'AH-2026-01844': {
-      updatedDate: '28.07.2026',
-      updatedTime: '15:30',
-      sla: '4 ч.',
-      assignee: 'Петров И.Н.',
+      id: 'AH-2026-01844',
+      title: 'Проблема с начислением пенсии',
+      category: 'Соцзащита',
+      aiStatus: 'Обработано',
+      priority: 'Критический',
+      statusCode: 'IN_PROGRESS',
+      assigneeId: 'user-003',
       assigneeGroup: 'Соцзащита',
+      createdAt: '2026-07-28T14:20:00+04:00',
+      updatedAt: '2026-07-28T15:30:00+04:00',
+      slaDueAt: '2026-08-01T14:20:00+04:00',
+      slaState: null,
       source: 'Портал',
       channel: 'Портал',
       responseFormat: 'Email',
@@ -101,15 +102,22 @@ const AppealsRepository = (() => {
       client: { name: 'Смирнова Людмила Григорьевна', phone: '+7 (495) 111-22-33', type: 'Физическое лицо', appealsCount: 1 },
       attachments: [],
       history: [
-        { id: 'h1', type: 'created', kind: 'system', author: 'Система', datetime: '28.07.2026 14:20', description: 'Обращение создано' },
+        { id: 'h1', appealId: 'AH-2026-01844', type: 'CREATED', actor: 'Система', createdAt: '2026-07-28T14:20:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
     },
     'AH-2026-01843': {
-      updatedDate: '28.07.2026',
-      updatedTime: '09:15',
-      sla: '3 дн.',
-      assignee: 'Не назначен',
+      id: 'AH-2026-01843',
+      title: 'Незаконная реклама на фасаде',
+      category: 'Градостроительство',
+      aiStatus: 'Обработка',
+      priority: 'Обычный',
+      statusCode: 'NEW',
+      assigneeId: null,
       assigneeGroup: 'Не указано',
+      createdAt: '2026-07-28T09:15:00+04:00',
+      updatedAt: '2026-07-28T09:15:00+04:00',
+      slaDueAt: '2026-08-05T09:15:00+04:00',
+      slaState: 'PAUSED',
       source: 'Мобильное приложение',
       channel: 'Приложение',
       responseFormat: 'Не указано',
@@ -117,15 +125,22 @@ const AppealsRepository = (() => {
       client: null,
       attachments: [],
       history: [
-        { id: 'h1', type: 'created', kind: 'system', author: 'Система', datetime: '28.07.2026 09:15', description: 'Обращение создано' },
+        { id: 'h1', appealId: 'AH-2026-01843', type: 'CREATED', actor: 'Система', createdAt: '2026-07-28T09:15:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
     },
     'AH-2026-01842': {
-      updatedDate: '27.07.2026',
-      updatedTime: '17:30',
-      sla: 'Нет данных',
-      assignee: 'Сидорова М.В.',
+      id: 'AH-2026-01842',
+      title: 'Шум от проведения ремонтных работ',
+      category: 'ЖКХ',
+      aiStatus: 'Обработано',
+      priority: 'Низкий',
+      statusCode: 'CLOSED',
+      assigneeId: 'user-001',
       assigneeGroup: 'ЖКХ — 1 линия',
+      createdAt: '2026-07-27T17:30:00+04:00',
+      updatedAt: '2026-07-28T10:00:00+04:00',
+      slaDueAt: '2026-07-30T17:30:00+04:00',
+      slaState: null,
       source: 'Телефон',
       channel: 'Кол-центр',
       responseFormat: 'Телефон',
@@ -133,110 +148,80 @@ const AppealsRepository = (() => {
       client: { name: 'Новикова Ольга Романовна', email: 'novikova@inbox.ru', type: 'Физическое лицо' },
       attachments: [],
       history: [
-        { id: 'h1', type: 'created', kind: 'system', author: 'Система', datetime: '27.07.2026 17:30', description: 'Обращение создано' },
-        { id: 'h2', type: 'status_changed', kind: 'system', author: 'Сидорова М.В.', datetime: '28.07.2026 10:00', description: 'Статус изменён', oldValue: 'В работе', newValue: 'Закрыта' },
+        { id: 'h1', appealId: 'AH-2026-01842', type: 'CREATED', actor: 'Система', createdAt: '2026-07-27T17:30:00+04:00', description: 'Обращение создано', kind: 'system' },
       ],
     },
   };
 
-  function mergeAppeal(id) {
-    const base = list.find((a) => a.id === id);
-    if (!base) return null;
-    const index = list.findIndex((a) => a.id === id);
-    const extra = details[id] || {};
-    return {
-      ...base,
-      priority: priorities[index] || 'Обычный',
-      ...extra,
-      history: [...(extra.history || [])],
-    };
+  function getRawById(id) {
+    return records[id] ? { ...records[id], history: [...records[id].history] } : null;
+  }
+
+  function saveRecord(record) {
+    records[record.id] = record;
+    return record;
+  }
+
+  function touchUpdatedAt(record) {
+    record.updatedAt = new Date().toISOString();
+    return record;
+  }
+
+  function pushHistory(record, event) {
+    record.history.unshift({
+      id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      appealId: record.id,
+      kind: event.kind || 'user',
+      ...event,
+    });
   }
 
   function getList() {
-    return list.map((item, index) => ({
-      ...item,
-      priority: priorities[index] || 'Обычный',
-    }));
+    return Object.values(records).map((r) => ({ ...r }));
   }
 
-  function getById(id, delayMs = 300) {
+  function getById(id, delayMs = 200) {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mergeAppeal(id));
-      }, delayMs);
+      setTimeout(() => resolve(getRawById(id)), delayMs);
     });
   }
 
-  function updateStatus(id, newStatus) {
-    const base = list.find((a) => a.id === id);
-    if (!base) return null;
-    const oldStatus = base.status;
-    base.status = newStatus;
-    const detail = details[id];
-    if (detail) {
-      detail.updatedDate = '29.07.2026';
-      detail.updatedTime = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-      detail.history.unshift({
-        id: `h-${Date.now()}`,
-        type: 'status_changed',
-        kind: 'system',
-        author: 'Администратор',
-        datetime: `${detail.updatedDate} ${detail.updatedTime}`,
-        description: 'Статус изменён',
-        oldValue: oldStatus,
-        newValue: newStatus,
-      });
-    }
-    return mergeAppeal(id);
-  }
-
-  function acceptToWork(id) {
-    const base = list.find((a) => a.id === id);
-    if (!base || base.status !== 'Новое') return null;
-    return updateStatus(id, 'В работе');
-  }
-
-  function addComment(id, text) {
-    const detail = details[id];
-    const base = list.find((a) => a.id === id);
-    if (!detail || !base || !text.trim()) return null;
-
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('ru-RU');
-    const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-
-    detail.updatedDate = dateStr;
-    detail.updatedTime = timeStr;
-    detail.history.unshift({
-      id: `c-${Date.now()}`,
-      type: 'comment',
-      kind: 'internal',
-      author: 'Администратор',
-      datetime: `${dateStr} ${timeStr}`,
-      description: text.trim(),
-    });
-    return mergeAppeal(id);
-  }
-
-  function addAppeal(appeal) {
-    list.unshift(appeal);
-    priorities.unshift('Высокий');
-    details[appeal.id] = details[appeal.id] || {
-      updatedDate: appeal.date,
-      updatedTime: appeal.time,
-      sla: '2 дн.',
-      assignee: 'Не назначен',
+  function addAppealFromFlow(appealCard) {
+    const id = appealCard.id;
+    if (records[id]) return records[id];
+    records[id] = {
+      id,
+      title: appealCard.title,
+      category: appealCard.category,
+      aiStatus: 'Обработано',
+      priority: 'Высокий',
+      statusCode: 'NEW',
+      assigneeId: null,
       assigneeGroup: 'Не указано',
-      source: 'PDF-документ',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      slaDueAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      slaState: null,
+      source: appealCard.source || 'PDF-документ',
       channel: 'Портал',
       responseFormat: 'Email',
-      region: 'г. Москва',
+      region: appealCard.region,
       description: 'Нет данных',
       client: null,
       attachments: [],
-      history: [{ id: 'h-new', type: 'created', kind: 'system', author: 'Система', datetime: `${appeal.date} ${appeal.time}`, description: 'Обращение создано из документа' }],
+      history: [{ id: 'h-new', appealId: id, type: 'CREATED', actor: 'Система', createdAt: new Date().toISOString(), description: 'Обращение создано из документа', kind: 'system' }],
+      isNew: true,
     };
+    return records[id];
   }
 
-  return { getList, getById, updateStatus, acceptToWork, addComment, addAppeal, mergeAppeal };
+  return {
+    getList,
+    getById,
+    getRawById,
+    saveRecord,
+    touchUpdatedAt,
+    pushHistory,
+    addAppealFromFlow,
+  };
 })();

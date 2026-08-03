@@ -67,3 +67,7 @@
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-body-md);
 }
+
+.ui-timeline__item--user .ui-timeline__author {
+  color: var(--color-text-primary);
+}
