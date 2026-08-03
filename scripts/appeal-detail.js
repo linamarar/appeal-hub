@@ -294,7 +294,7 @@ const AppealDetailPage = (() => {
     otherField.hidden = true;
 
     userSelect.innerHTML = getActiveUsers().map((u) =>
-      `<option value="${u.id}">${escapeHtml(u.name)} · ${escapeHtml(u.department)}</option>`
+      `<option value="${u.id}">${escapeHtml(u.name)}</option>`
     ).join('');
 
     reasonSelect.innerHTML = REASSIGN_REASONS.map((r) =>
