@@ -48,12 +48,6 @@
   line-height: var(--line-height-body-sm);
 }
 
-.shell-sidebar__subtitle {
-  font-size: var(--font-size-body-md);
-  color: var(--color-text-inverse-muted);
-  margin-top: var(--spacing-1);
-}
-
 .shell-nav {
   display: flex;
   flex-direction: column;
@@ -250,7 +244,6 @@
 }
 
 .app-shell--sidebar-collapsed .shell-sidebar__brand-text,
-.app-shell--sidebar-collapsed .shell-sidebar__subtitle,
 .app-shell--sidebar-collapsed .shell-nav__item span,
 .app-shell--sidebar-collapsed .shell-sidebar__meta,
 .app-shell--sidebar-collapsed .shell-sidebar__version,
@@ -284,7 +277,6 @@
   }
 
   .shell-sidebar__brand-text,
-  .shell-sidebar__subtitle,
   .shell-nav__item span,
   .shell-sidebar__meta,
   .shell-sidebar__version,
