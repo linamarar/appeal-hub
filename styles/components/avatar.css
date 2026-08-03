@@ -1,0 +1,31 @@
+/* Avatar — derived from List items With ellipse pattern */
+
+.ui-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-background-surface-muted);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-heading-xs);
+  overflow: hidden;
+}
+
+.ui-avatar--sm {
+  width: 32px;
+  height: 32px;
+}
+
+.ui-avatar--md {
+  width: 40px;
+  height: 40px;
+}
+
+.ui-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

@@ -1,0 +1,10 @@
+/**
+ * Foundation reset for Appeal Hub (token era).
+ * Legacy prototype reset remains in styles/main.css and takes precedence
+ * for existing components until migration.
+ */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

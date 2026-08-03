@@ -1,0 +1,206 @@
+{
+  "$description": "Semantic design tokens for Appeal Hub. Values reference primitives.tokens.json.",
+  "color": {
+    "brand": {
+      "primary": { "value": "{color.copper}", "primitive": "color.copper" },
+      "primaryHover": { "value": "{color.copper-light}", "primitive": "color.copper-light" },
+      "primaryFill": { "value": "{color.copper-fill}", "primitive": "color.copper-fill" },
+      "secondary": { "value": "{color.cooper-dark}", "primitive": "color.cooper-dark" }
+    },
+    "accent": {
+      "default": { "value": "{color.copper}", "primitive": "color.copper" }
+    },
+    "background": {
+      "page": { "value": "{color.white}", "primitive": "color.white" },
+      "surface": { "value": "{color.white}", "primitive": "color.white" },
+      "surfaceMuted": { "value": "{color.grey-soft}", "primitive": "color.grey-soft" },
+      "inverse": { "value": "{color.black}", "primitive": "color.black" },
+      "tabbar": { "value": "{color.tabbar-dark}", "primitive": "color.tabbar-dark" }
+    },
+    "text": {
+      "primary": { "value": "{color.black}", "primitive": "color.black" },
+      "secondary": { "value": "{color.text-muted-on-white}", "primitive": "color.text-muted-on-white" },
+      "muted": { "value": "{color.grey}", "primitive": "color.grey" },
+      "inverse": { "value": "{color.white}", "primitive": "color.white" },
+      "inverseMuted": { "value": "{color.white-64}", "primitive": "color.white-64" },
+      "accent": { "value": "{color.copper}", "primitive": "color.copper" },
+      "link": { "value": "{color.info}", "primitive": "color.info" }
+    },
+    "icon": {
+      "primary": { "value": "{color.black}", "primitive": "color.black" },
+      "secondary": { "value": "{color.grey}", "primitive": "color.grey" },
+      "inverse": { "value": "{color.white}", "primitive": "color.white" },
+      "accent": { "value": "{color.copper}", "primitive": "color.copper" }
+    },
+    "border": {
+      "default": { "value": "{color.grey-light}", "primitive": "color.grey-light" },
+      "subtle": { "value": "{color.grey-soft}", "primitive": "color.grey-soft" },
+      "strong": { "value": "{color.grey-dark}", "primitive": "color.grey-dark" }
+    },
+    "divider": {
+      "default": { "value": "{color.grey-light}", "primitive": "color.grey-light" }
+    },
+    "interactive": {
+      "primary": { "value": "{color.copper}", "primitive": "color.copper" },
+      "primaryHover": { "value": "{color.copper-light}", "primitive": "color.copper-light" },
+      "secondary": { "value": "{color.black}", "primitive": "color.black" },
+      "secondaryHover": { "value": "{color.black-soft}", "primitive": "color.black-soft" }
+    },
+    "focus": {
+      "ring": { "value": "{color.info}", "primitive": "color.info", "confirmed": false, "note": "Focus ring not explicitly defined in Figma atoms; mapped to Blue until confirmed" }
+    },
+    "disabled": {
+      "background": { "value": "{color.grey-soft}", "primitive": "color.grey-soft" },
+      "text": { "value": "{color.grey}", "primitive": "color.grey" },
+      "opacity": { "value": "{opacity.white-text-secondary}", "primitive": "opacity.white-text-secondary", "usage": "On inverse surfaces only" }
+    },
+    "status": {
+      "success": { "value": "{color.success}", "primitive": "color.success" },
+      "successSurface": { "value": "rgba(20, 117, 70, 0.08)", "primitive": null, "note": "Derived from success; surface tint not in Figma atoms" },
+      "danger": { "value": "{color.error}", "primitive": "color.error" },
+      "dangerSurface": { "value": "rgba(230, 66, 66, 0.08)", "primitive": null, "note": "Derived from error; surface tint not in Figma atoms" },
+      "info": { "value": "{color.info}", "primitive": "color.info" }
+    }
+  },
+  "typography": {
+    "heading": {
+      "xl": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.56}",
+        "fontWeight": "{fontWeight.medium}",
+        "lineHeight": "{lineHeight.56}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "Desktop/Headline/H1"
+      },
+      "lg": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.36}",
+        "fontWeight": "{fontWeight.medium}",
+        "lineHeight": "{lineHeight.40}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "h2 desktop"
+      },
+      "md": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.28}",
+        "fontWeight": "{fontWeight.medium}",
+        "lineHeight": "{lineHeight.36}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "h3 desktop"
+      },
+      "sm": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.24}",
+        "fontWeight": "{fontWeight.medium}",
+        "lineHeight": "{lineHeight.30}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "h4 desktop"
+      },
+      "xs": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.18}",
+        "fontWeight": "{fontWeight.medium}",
+        "lineHeight": "{lineHeight.24}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "h5 desktop"
+      }
+    },
+    "body": {
+      "xl": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.36}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.48}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "txt-xl"
+      },
+      "lg": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.22}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.32}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "txt-l"
+      },
+      "md": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.15}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.22}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "txt-m"
+      },
+      "sm": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.16}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.unit-136}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "Button M"
+      }
+    },
+    "label": {
+      "md": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.15}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.22}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "txt-m (label usage)"
+      },
+      "sm": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.16}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.unit-136}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "Button M (label usage)"
+      }
+    },
+    "caption": {
+      "default": {
+        "fontFamily": "{font.family-primary}",
+        "fontSize": "{fontSize.15}",
+        "fontWeight": "{fontWeight.regular}",
+        "lineHeight": "{lineHeight.22}",
+        "letterSpacing": "{letterSpacing.0}",
+        "figma": "txt-m (caption usage)"
+      }
+    }
+  },
+  "spacing": {
+    "inline-xs": { "value": "{spacing.2}", "primitive": "spacing.2" },
+    "inline-sm": { "value": "{spacing.3}", "primitive": "spacing.3" },
+    "inline-md": { "value": "{spacing.5}", "primitive": "spacing.5" },
+    "inline-lg": { "value": "{spacing.7}", "primitive": "spacing.7" },
+    "stack-xs": { "value": "{spacing.2}", "primitive": "spacing.2" },
+    "stack-sm": { "value": "{spacing.4}", "primitive": "spacing.4" },
+    "stack-md": { "value": "{spacing.5}", "primitive": "spacing.5" },
+    "stack-lg": { "value": "{spacing.7}", "primitive": "spacing.7" },
+    "stack-xl": { "value": "{spacing.8}", "primitive": "spacing.8" },
+    "page": { "value": "{spacing.8}", "primitive": "spacing.8" },
+    "section": { "value": "{spacing.10}", "primitive": "spacing.10" }
+  },
+  "radius": {
+    "control": { "value": "{radius.control-sm}", "primitive": "radius.control-sm" },
+    "controlLg": { "value": "{radius.control-md}", "primitive": "radius.control-md" },
+    "surface": { "value": "{radius.element-sm}", "primitive": "radius.element-sm" },
+    "surfaceLg": { "value": "{radius.element-lg}", "primitive": "radius.element-lg" },
+    "section": { "value": "{radius.section}", "primitive": "radius.section" },
+    "pill": { "value": "{radius.full}", "primitive": "radius.full" }
+  },
+  "shadow": {
+    "sm": { "value": "{shadow.cookies}", "primitive": "shadow.cookies", "note": "Only explicit shadow in Figma atoms; used as base elevation" },
+    "buttonPrimary": {
+      "value": "{shadow.button-primary-inner-light}, {shadow.button-primary-inner-dark}",
+      "primitive": "shadow.button-primary-inner-light"
+    }
+  },
+  "control": {
+    "height": {
+      "sm": { "value": "{controlHeight.sm}", "primitive": "controlHeight.sm" },
+      "md": { "value": "{controlHeight.md}", "primitive": "controlHeight.md" },
+      "lg": { "value": "{controlHeight.lg}", "primitive": "controlHeight.lg" }
+    }
+  }
+}

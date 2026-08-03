@@ -4,7 +4,7 @@
 
 | Компонент проекта | Путь | Компонент Figma | Статус | Что сохраняем | Что меняем | Риск |
 |---|---|---|---|---|---|---|
-| Button (primary) | `styles/main.css` `.btn--primary` | Кнопки → Type=Primary (Молекулы) | Partial match | Semantics (primary action) | Colors, font (Inter→TT Firs), sizes L/M/S, states Loading/Disable, inner shadows | Средний |
+| Button (primary) | `styles/main.css` `.btn--primary` | Кнопки → Type=Primary (Молекулы) | Partial match | Semantics (primary action) | Use `--color-action-primary`, `--control-height-*`, `--shadow-button-primary` | Средний |
 | Button (secondary) | `styles/main.css` `.btn--secondary` | Кнопки → Type=Secondary | Partial match | Semantics (secondary action) | Border, hover, all variant matrix | Средний |
 | Table link | `styles/main.css` `.table__link` | Button link (Молекулы) | Partial match | Link-style action in table | Styling, component API | Низкий |
 | Input (search) | `styles/main.css` `.search input` | Input (Молекулы) | Partial match | Search use case | Wrapper, label, states, Figma Input spec | Средний |
@@ -28,11 +28,11 @@
 | Meta list | `styles/main.css` `.meta-list` | List items | Partial match | Key-value metadata display | Styling | Низкий |
 | Nav item | `styles/main.css` `.nav-item` | 🟢 Навигация items | Partial match | Navigation item with icon | Active state, icon set | Средний |
 | Inline SVG icons | `index.html` (multiple) | Assets → Icons | Partial match | Icon usage points | Replace all with Figma icon set | Средний |
-| Typography | `styles/main.css` + Inter | Атомы → Типографика | No match | Heading hierarchy concept | Font family, all sizes/weights | Высокий |
-| Color tokens | `styles/main.css` `:root` | Атомы → Цвета | No match | Semantic color usage | Full palette replacement | Высокий |
-| Spacing | ad-hoc in CSS | Атомы → Отступы | Requires clarification | — | Systematic spacing scale | Средний |
-| Border radius | `--radius`, `--radius-lg` | Атомы → Скругления | Requires clarification | — | Match Figma radius scale | Низкий |
-| Shadows | `--shadow`, `--shadow-sm` | Атомы → Тени | Requires clarification | — | Match Figma shadow tokens | Низкий |
+| Typography | `styles/main.css` + Inter | Атомы → Типографика | No match → **Tokens created** | Heading hierarchy concept | Migrate components to `--font-*` / `.text-*` utilities | Высокий |
+| Color tokens | `styles/main.css` `:root` | Атомы → Цвета | No match → **Tokens created** | Semantic color usage | Migrate to `styles/tokens/tokens.css` vars | Высокий |
+| Spacing | ad-hoc in CSS | Атомы → Отступы | Requires clarification → **Tokens created** | — | Use `--spacing-*` in new components | Средний |
+| Border radius | `--radius`, `--radius-lg` | Атомы → Скругления | Requires clarification → **Tokens created** | — | Map to `--radius-control`, `--radius-surface` | Низкий |
+| Shadows | `--shadow`, `--shadow-sm` | Атомы → Тени | Requires clarification → **Tokens created** | — | Map to `--shadow-elevation-sm` | Низкий |
 | Textarea | — | Input (multiline?) | Project component missing | — | Implement from Figma | Низкий |
 | Checkbox | — | Checkbox (Молекулы) | Project component missing | — | Implement from Figma | Низкий |
 | Radio | — | Radio button (Молекулы) | Project component missing | — | Implement from Figma | Низкий |

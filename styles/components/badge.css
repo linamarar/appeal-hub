@@ -1,0 +1,62 @@
+/* Figma: Offer → theme=light|dark (height 20px baseline) */
+
+.ui-badge,
+.ui-status-badge,
+.ui-priority-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 20px;
+  padding: 2px var(--spacing-3);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-body-md);
+  line-height: var(--line-height-body-md);
+  white-space: nowrap;
+}
+
+.ui-status-badge--neutral {
+  background: var(--color-background-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.ui-status-badge--info {
+  background: rgba(0, 98, 168, 0.1);
+  color: var(--color-status-info);
+}
+
+.ui-status-badge--warning {
+  background: rgba(232, 78, 14, 0.1);
+  color: var(--color-brand-primary-fill);
+}
+
+.ui-status-badge--success {
+  background: rgba(20, 117, 70, 0.1);
+  color: var(--color-status-success);
+}
+
+.ui-status-badge--danger {
+  background: rgba(230, 66, 66, 0.1);
+  color: var(--color-status-danger);
+}
+
+.ui-priority-badge--low {
+  background: var(--color-background-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.ui-priority-badge--normal {
+  background: rgba(0, 98, 168, 0.08);
+  color: var(--color-status-info);
+}
+
+.ui-priority-badge--high {
+  background: rgba(232, 78, 14, 0.1);
+  color: var(--color-brand-primary-fill);
+}
+
+.ui-priority-badge--critical {
+  background: rgba(230, 66, 66, 0.1);
+  color: var(--color-status-danger);
+}

@@ -1,0 +1,120 @@
+{
+  "$description": "Primitive design tokens extracted from Figma UI Kit (fileKey: sFtelWja1vzUGTjPMkBEQn). Source pages: Атомы → Цвета, Отступы, Скругления, Тени, Типографика.",
+  "$figma": {
+    "fileKey": "sFtelWja1vzUGTjPMkBEQn",
+    "extractedAt": "2026-08-03"
+  },
+  "color": {
+    "white": { "value": "#FFFFFF", "figma": { "page": "Цвета", "name": "White" } },
+    "black-hard": { "value": "#141414", "figma": { "page": "Цвета", "name": "Black Hard" } },
+    "black": { "value": "#1F1F1F", "figma": { "page": "Цвета", "name": "Black" } },
+    "black-soft": { "value": "#292929", "figma": { "page": "Цвета", "name": "Black Soft" } },
+    "grey-jet": { "value": "#2C2C2C", "figma": { "page": "Цвета", "name": "Grey Jet" } },
+    "grey-dark": { "value": "#414141", "figma": { "page": "Цвета", "name": "Grey Dark" } },
+    "grey": { "value": "#959596", "figma": { "page": "Цвета", "name": "Grey", "variable": "Text/Grey text" } },
+    "grey-light": { "value": "#D9D9D9", "figma": { "page": "Цвета", "name": "Grey light" } },
+    "grey-soft": { "value": "#F4F4F4", "figma": { "page": "Цвета", "name": "Grey soft" } },
+    "cooper-dark": { "value": "#AC400F", "figma": { "page": "Цвета", "name": "Cooper (gradient start)" } },
+    "cooper-light": { "value": "#DD7921", "figma": { "page": "Цвета", "name": "Cooper (gradient end)" } },
+    "copper": { "value": "#E84E0E", "figma": { "page": "Цвета", "name": "Copper (accient) (gradient start)" } },
+    "copper-light": { "value": "#FF8A1E", "figma": { "page": "Цвета", "name": "Copper (accient) (gradient end)" } },
+    "copper-fill": { "value": "#C65E18", "figma": { "page": "Цвета", "name": "Fill cooper" } },
+    "tabbar-dark": { "value": "#262626", "figma": { "page": "Цвета", "name": "Tabbar (gradient start)" } },
+    "tabbar-darker": { "value": "#1C1C1C", "figma": { "page": "Цвета", "name": "Tabbar (gradient end)" } },
+    "text-muted-on-white": { "value": "#6F6F70", "figma": { "page": "Цвета", "name": "Grey text on white" } },
+    "error": { "value": "#E64242", "figma": { "page": "Цвета", "name": "Error" } },
+    "success": { "value": "#147546", "figma": { "page": "Цвета", "name": "Success" } },
+    "info": { "value": "#0062A8", "figma": { "page": "Цвета", "name": "Blue" } },
+    "white-64": { "value": "rgba(255, 255, 255, 0.64)", "figma": { "page": "Цвета", "name": "White opacity" } }
+  },
+  "spacing": {
+    "0": { "value": "0px", "figma": { "page": "Отступы", "name": "0" } },
+    "1": { "value": "2px", "figma": { "page": "Отступы", "name": "2 px" } },
+    "2": { "value": "4px", "figma": { "page": "Отступы", "name": "4 px" } },
+    "3": { "value": "8px", "figma": { "page": "Отступы", "name": "8 px" } },
+    "4": { "value": "12px", "figma": { "page": "Отступы", "name": "12 px" } },
+    "5": { "value": "16px", "figma": { "page": "Отступы", "name": "16 px" } },
+    "6": { "value": "20px", "figma": { "page": "Отступы", "name": "20 px" } },
+    "7": { "value": "24px", "figma": { "page": "Отступы", "name": "24 px" } },
+    "8": { "value": "32px", "figma": { "page": "Отступы", "name": "32 px" } },
+    "9": { "value": "40px", "figma": { "page": "Отступы", "name": "40 px" } },
+    "10": { "value": "48px", "figma": { "page": "Отступы", "name": "48 px" } },
+    "11": { "value": "56px", "figma": { "page": "Отступы", "name": "56 px" } },
+    "12": { "value": "64px", "figma": { "page": "Отступы", "name": "64 px" } },
+    "13": { "value": "72px", "figma": { "page": "Отступы", "name": "72 px" } },
+    "14": { "value": "80px", "figma": { "page": "Отступы", "name": "80 px" } },
+    "15": { "value": "88px", "figma": { "page": "Отступы", "name": "88 px" } }
+  },
+  "radius": {
+    "control-sm": { "value": "8px", "figma": { "page": "Скругления", "name": "8 px", "usage": "Контролы" } },
+    "control-md": { "value": "12px", "figma": { "page": "Скругления", "name": "12 px", "usage": "Контролы" } },
+    "element-sm": { "value": "16px", "figma": { "page": "Скругления", "name": "16 px", "usage": "Элементы внутри секций" } },
+    "element-md": { "value": "20px", "figma": { "page": "Скругления", "name": "20 px", "usage": "Элементы внутри секций" } },
+    "element-lg": { "value": "24px", "figma": { "page": "Скругления", "name": "24 px", "usage": "Элементы внутри секций" } },
+    "section": { "value": "32px", "figma": { "page": "Скругления", "name": "32 px", "usage": "Секции" } },
+    "full": { "value": "9999px", "figma": { "page": "—", "name": "Pill (derived from badge usage)", "confirmed": false } }
+  },
+  "shadow": {
+    "cookies": {
+      "value": "0px 4px 14.8px 0px rgba(0, 0, 0, 0.55)",
+      "figma": { "page": "Тени", "name": "Shadow for cookies" }
+    },
+    "button-primary-inner-light": {
+      "value": "inset 1px 1px 2px 0 rgba(255, 255, 255, 0.31)",
+      "figma": { "page": "Молекулы → Кнопки", "variable": "Button Primary", "note": "Inner shadow #FFFFFF4F" }
+    },
+    "button-primary-inner-dark": {
+      "value": "inset -1px -1px 2px 0 rgba(33, 41, 48, 0.42)",
+      "figma": { "page": "Молекулы → Кнопки", "variable": "Button Primary", "note": "Inner shadow #2129306B" }
+    }
+  },
+  "font": {
+    "family-primary": {
+      "value": "\"TT Firs Text Trial Variable\", system-ui, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+      "figma": { "page": "Типографика / Variables", "name": "TT Firs Text Trial Variable" },
+      "licenseNote": "Font name as token only; no font files in repo"
+    }
+  },
+  "fontSize": {
+    "17": { "value": "17px", "figma": { "page": "Типографика", "name": "h5 mobile" } },
+    "18": { "value": "18px", "figma": { "page": "Типографика", "name": "h5 desktop" } },
+    "19": { "value": "19px", "figma": { "page": "Типографика", "name": "h4 mobile" } },
+    "20": { "value": "20px", "figma": { "page": "Типографика", "name": "h3 mobile" } },
+    "22": { "value": "22px", "figma": { "page": "Типографика", "name": "txt-l" } },
+    "24": { "value": "24px", "figma": { "page": "Типографика", "name": "h4 desktop" } },
+    "26": { "value": "26px", "figma": { "page": "Типографика", "name": "h2 mobile" } },
+    "28": { "value": "28px", "figma": { "page": "Типографика", "name": "h3 desktop" } },
+    "32": { "value": "32px", "figma": { "page": "Типографика", "name": "h1 mobile" } },
+    "36": { "value": "36px", "figma": { "page": "Типографика", "name": "h2 desktop / txt-xl" } },
+    "56": { "value": "56px", "figma": { "page": "Типографика", "name": "h1 desktop" } },
+    "15": { "value": "15px", "figma": { "page": "Типографика", "name": "txt-m" } },
+    "16": { "value": "16px", "figma": { "page": "Variables", "name": "Button M" } }
+  },
+  "fontWeight": {
+    "regular": { "value": "450", "figma": { "page": "Типографика", "name": "txt-* weight" } },
+    "medium": { "value": "500", "figma": { "page": "Типографика", "name": "h* weight" } }
+  },
+  "lineHeight": {
+    "22": { "value": "22px", "figma": { "page": "Типографика", "name": "txt-m / h5 mobile" } },
+    "24": { "value": "24px", "figma": { "page": "Типографика", "name": "h5 desktop / h3 mobile" } },
+    "30": { "value": "30px", "figma": { "page": "Типографика", "name": "h4 desktop" } },
+    "32": { "value": "32px", "figma": { "page": "Типографика", "name": "txt-l / h2 mobile" } },
+    "34": { "value": "34px", "figma": { "page": "Типографика", "name": "h1 mobile" } },
+    "36": { "value": "36px", "figma": { "page": "Типографика", "name": "h3 desktop" } },
+    "40": { "value": "40px", "figma": { "page": "Типографика", "name": "h2 desktop" } },
+    "48": { "value": "48px", "figma": { "page": "Типографика", "name": "txt-xl" } },
+    "56": { "value": "56px", "figma": { "page": "Типографика", "name": "h1 desktop" } },
+    "unit-136": { "value": "1.36", "figma": { "page": "Variables", "name": "Button M lineHeight" } }
+  },
+  "letterSpacing": {
+    "0": { "value": "0", "figma": { "page": "Типографика", "name": "default" } }
+  },
+  "controlHeight": {
+    "sm": { "value": "32px", "figma": { "page": "Молекулы → Кнопки", "name": "Size=S" } },
+    "md": { "value": "40px", "figma": { "page": "Молекулы → Кнопки", "name": "Size=M" } },
+    "lg": { "value": "48px", "figma": { "page": "Молекулы → Кнопки", "name": "Size=L" } }
+  },
+  "opacity": {
+    "white-text-secondary": { "value": "0.64", "figma": { "page": "Цвета", "name": "White opacity" } }
+  }
+}

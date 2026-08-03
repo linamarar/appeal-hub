@@ -1,0 +1,12 @@
+/**
+ * Base foundation styles using semantic tokens.
+ * Loaded before legacy main.css — prototype styles intentionally override
+ * body typography to preserve current visual appearance.
+ */
+
+[data-theme="light"],
+:root {
+  color-scheme: light;
+}
+
+/* Token layer marker — no body overrides until component migration */

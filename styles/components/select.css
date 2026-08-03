@@ -1,0 +1,57 @@
+/* Figma: Select → default closed state */
+
+.ui-select,
+.ui-select__control {
+  appearance: none;
+  width: 100%;
+  min-width: 160px;
+  min-height: 46px;
+  padding: 0 var(--spacing-10) 0 var(--spacing-4);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  background-color: var(--color-background-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23959596' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-4) center;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-body-md);
+  line-height: var(--line-height-body-md);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.ui-select:focus,
+.ui-select__control:focus {
+  outline: none;
+  border-color: var(--color-focus-ring);
+  box-shadow: 0 0 0 1px var(--color-focus-ring);
+}
+
+.ui-select:disabled,
+.ui-select__control:disabled {
+  background: var(--color-disabled-background);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
+.ui-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 160px;
+}
+
+.ui-select-wrap::after {
+  content: "";
+  position: absolute;
+  right: var(--spacing-4);
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--color-icon-secondary);
+  border-bottom: 2px solid var(--color-icon-secondary);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}

@@ -1,3 +1,24 @@
+/**
+ * Appeals list + shell (Figma UI Kit migration)
+ * Legacy views: flow, appeal-detail — unchanged logic
+ */
+
+const STATUS_META = {
+  'Новое': { label: 'Новая', variant: 'warning' },
+  'В работе': { label: 'В работе', variant: 'info' },
+  'Закрыто': { label: 'Закрыта', variant: 'success' },
+};
+
+const PRIORITY_LABELS = ['Низкий', 'Обычный', 'Высокий', 'Критический'];
+
+const PRIORITY_META = {
+  'Низкий': 'low',
+  'Обычный': 'normal',
+  'Средний': 'normal',
+  'Высокий': 'high',
+  'Критический': 'critical',
+};
+
 const appeals = [
   {
     id: 'AH-2026-01847',
@@ -67,6 +88,20 @@ const appealCardData = {
   region: 'г. Москва',
 };
 
+function renderStatusBadge(status) {
+  const meta = STATUS_META[status] || { label: status, variant: 'neutral' };
+  return `<span class="ui-status-badge ui-status-badge--${meta.variant}">${meta.label}</span>`;
+}
+
+function renderPriorityBadge(priority) {
+  const variant = PRIORITY_META[priority] || 'normal';
+  return `<span class="ui-priority-badge ui-priority-badge--${variant}">${priority}</span>`;
+}
+
+function displayPriority(index) {
+  return PRIORITY_LABELS[index % PRIORITY_LABELS.length];
+}
+
 function renderAppealCard(container, data, full = false) {
   container.innerHTML = `
     <div class="appeal-card__header">
@@ -105,50 +140,63 @@ function renderAppealCard(container, data, full = false) {
   `;
 }
 
-function getStatusBadge(status) {
-  const map = {
-    'Новое': 'badge--warning',
-    'В работе': 'badge--ai',
-    'Закрыто': 'badge--success',
-  };
-  return map[status] || 'badge--neutral';
+function updateAppealsCount(count) {
+  const el = document.getElementById('appeals-count');
+  if (el) el.textContent = `Найдено обращений: ${count}`;
 }
 
-function getAiBadge(status) {
-  if (status === 'Обработка') return 'badge--warning';
-  return 'badge--success';
+function setListState(state) {
+  const loading = document.getElementById('appeals-loading');
+  const empty = document.getElementById('appeals-empty');
+  const data = document.getElementById('appeals-data-panel');
+
+  [loading, empty].forEach((panel) => {
+    if (panel) panel.classList.toggle('is-visible', panel.dataset.state === state);
+  });
+  if (data) data.classList.toggle('is-hidden', state !== 'loaded');
 }
 
 function renderTable() {
   const tbody = document.getElementById('appeals-table-body');
-  tbody.innerHTML = appeals.map(a => `
-    <tr data-go="appeal-detail">
-      <td><span class="table__id">${a.id}</span></td>
-      <td>${a.date}, ${a.time}</td>
+  if (!tbody) return;
+
+  updateAppealsCount(appeals.length);
+  setListState(appeals.length ? 'loaded' : 'empty');
+
+  tbody.innerHTML = appeals.map((a, index) => {
+    const priority = displayPriority(index);
+    return `
+    <tr>
+      <td><span class="ui-data-table__id">${a.id}</span></td>
+      <td class="ui-data-table__muted">—</td>
       <td>${a.title}</td>
-      <td>${a.category}</td>
-      <td><span class="badge ${getAiBadge(a.aiStatus)}">${a.aiStatus}</span></td>
-      <td><span class="badge ${getStatusBadge(a.status)}">${a.status}</span></td>
-      <td><button class="table__link" data-go="appeal-detail">Открыть</button></td>
+      <td>${renderStatusBadge(a.status)}</td>
+      <td>${renderPriorityBadge(priority)}</td>
+      <td class="ui-data-table__muted">—</td>
+      <td class="ui-data-table__muted">—</td>
+      <td class="ui-data-table__muted">${a.date}, ${a.time}</td>
+      <td><button type="button" class="ui-data-table__link" data-go="appeal-detail">Открыть</button></td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function switchView(viewId) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('view--active'));
-  document.getElementById(`view-${viewId}`).classList.add('view--active');
+  document.querySelectorAll('.view').forEach((v) => v.classList.remove('view--active'));
+  const target = document.getElementById(`view-${viewId}`);
+  if (target) target.classList.add('view--active');
 
-  document.querySelectorAll('.nav-item').forEach(n => {
-    n.classList.toggle('nav-item--active', n.dataset.view === viewId);
+  document.querySelectorAll('.shell-nav__item[data-view]').forEach((n) => {
+    n.classList.toggle('is-active', n.dataset.view === viewId);
   });
 }
 
 function setFlowStep(step) {
-  document.querySelectorAll('.flow-panel').forEach(p => p.classList.remove('flow-panel--active'));
+  document.querySelectorAll('.flow-panel').forEach((p) => p.classList.remove('flow-panel--active'));
   document.getElementById(`flow-step-${step}`).classList.add('flow-panel--active');
 
-  document.querySelectorAll('.flow-step').forEach(s => {
-    const n = parseInt(s.dataset.step);
+  document.querySelectorAll('.flow-step').forEach((s) => {
+    const n = parseInt(s.dataset.step, 10);
     s.classList.remove('flow-step--done', 'flow-step--active');
     if (n < step) s.classList.add('flow-step--done');
     if (n === step) s.classList.add('flow-step--active');
@@ -176,7 +224,7 @@ function simulateAIProcessing() {
         renderAppealCard(document.getElementById('new-appeal-card'), appealCardData);
         setFlowStep(3);
 
-        if (!appeals.find(a => a.isNew)) {
+        if (!appeals.find((a) => a.isNew)) {
           appeals.unshift({
             id: appealCardData.id,
             date: '29.07.2026',
@@ -198,6 +246,7 @@ function initFlow() {
   const uploadZone = document.getElementById('upload-zone');
   const fileInput = document.getElementById('file-input');
   const incomingPreview = document.getElementById('incoming-preview');
+  if (!uploadZone || !fileInput) return;
 
   document.getElementById('btn-upload').addEventListener('click', () => fileInput.click());
 
@@ -226,8 +275,9 @@ function initFlow() {
 }
 
 function initNavigation() {
-  document.querySelectorAll('[data-view]').forEach(el => {
+  document.querySelectorAll('[data-view]').forEach((el) => {
     el.addEventListener('click', () => {
+      if (el.disabled) return;
       switchView(el.dataset.view);
       if (el.dataset.view === 'flow') {
         setFlowStep(1);
@@ -237,21 +287,45 @@ function initNavigation() {
     });
   });
 
-  document.querySelectorAll('[data-go]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      switchView(el.dataset.go);
-    });
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-go]');
+    if (!trigger) return;
+    switchView(trigger.dataset.go);
   });
 
-  document.getElementById('appeals-table-body').addEventListener('click', (e) => {
-    const row = e.target.closest('tr');
-    if (row) switchView('appeal-detail');
-  });
+  const tbody = document.getElementById('appeals-table-body');
+  if (tbody) {
+    tbody.addEventListener('click', (e) => {
+      if (e.target.closest('[data-go]')) return;
+      const row = e.target.closest('tr');
+      if (row) switchView('appeal-detail');
+    });
+  }
+
+  const resetBtn = document.getElementById('filters-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      document.querySelectorAll('.appeals-toolbar select').forEach((s) => {
+        s.selectedIndex = 0;
+      });
+      const search = document.getElementById('appeals-search');
+      if (search) search.value = '';
+    });
+  }
+
+  const refreshBtn = document.getElementById('appeals-refresh');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+      setListState('loading');
+      setTimeout(renderTable, 300);
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderTable();
+  setListState('loading');
+  setTimeout(renderTable, 400);
+
   renderAppealCard(document.getElementById('detail-appeal-card'), appealCardData, true);
   initFlow();
   initNavigation();
