@@ -1,111 +1,149 @@
-# Фактически реализованный scope
+# Текущий охват — Хаб обращений (v0.1 прототип)
 
-Дата инвентаризации: 2026-08-03  
-Ревизия: `28563e0` (`master` / `origin/master`)  
-Опубликованный URL: https://appealhub.mararx.com/ (редирект с `https://linamarar.github.io/appeal-hub/`)
+**Дата инвентаризации:** 03.08.2026  
+**Метод:** анализ кода, статическая проверка, локальный HTTP-сервер (curl), без изменений production-кода.
 
-## Маршруты
+---
 
-Hash-routing (`location.hash`). Базовый fallback при пустом hash: `#/appeals`.
+## Тип проекта
 
-| Hash | View ID | Описание |
+| Параметр | Значение |
+|---|---|
+| Тип | Статический SPA (HTML + CSS + JS, без сборки) |
+| `package.json` | Отсутствует |
+| Сборка | Не требуется — открытие `index.html` или GitHub Pages |
+| CI/CD | `.github/workflows/static.yml` — деплой всего репозитория на GitHub Pages |
+| Документированный URL | `README.md`: локально `index.html` |
+| Production URL (проверен curl) | `https://appealhub.mararx.com/` → HTTP 200 |
+| GitHub Pages (remote) | `https://github.com/linamarar/appeal-hub` → `https://linamarar.github.io/appeal-hub/` (301) |
+
+---
+
+## Маршрутизация (`parseRoute` в `scripts/app.js`)
+
+| Hash-маршрут | View ID | Страница | Обработчик |
+|---|---|---|---|
+| `#/appeals` (default) | `dashboard` | Список обращений | `renderTable()` |
+| `#/` / пустой hash | `dashboard` | → редирект на `#/appeals` при загрузке | `DOMContentLoaded` |
+| `#/appeals/:id` | `appeal-detail` | Карточка обращения | `AppealDetailPage.load(id)` |
+| `#/clients` | `clients` | Список клиентов | `ClientsPage.load()` |
+| `#/clients/:id` | `client-detail` | Карточка клиента | `ClientDetailPage.load(id)` |
+| `#/templates` | `templates` | Шаблоны | `TemplatesPage.load()` |
+| `#/analytics` | `analytics` | Аналитика (mock) | `AnalyticsPage.load()` |
+| `#/settings` | `settings` | Каталог настроек | `SettingsPage.load()` |
+| `#/settings/:slug` | `settings-detail` | Заглушка подраздела | `SettingsPage.loadDetail(slug)` |
+| `#/flow` | `flow` | Legacy: создание обращения | `initFlow()`, AI-симуляция |
+| Неизвестный hash | `dashboard` | Fallback без 404-экрана | `parseRoute()` default |
+
+---
+
+## Views / секции в `index.html`
+
+| View | ID | Статус |
 |---|---|---|
-| `#/appeals`, `#/`, неизвестный hash | `dashboard` | Список обращений |
-| `#/appeals/:id` | `appeal-detail` | Карточка обращения |
-| `#/flow` | `flow` | Создание обращения (upload → AI mock → карточка) |
-| `#/clients` | `clients` | Список клиентов (mock) |
-| `#/clients/:id` | `client-detail` | Карточка клиента (mock) |
-| `#/templates` | `templates` | Шаблоны (mock) |
-| `#/analytics` | `analytics` | Аналитика KPI/графики (mock) |
-| `#/settings` | `settings` | Каталог настроек (mock) |
-| `#/settings/:slug` | `settings-detail` | Заглушка раздела настроек |
+| Список обращений | `#view-dashboard` | Реализован |
+| Flow создания | `#view-flow` | Реализован (legacy) |
+| Карточка обращения | `#view-appeal-detail` | Реализован |
+| Клиенты | `#view-clients` | Mock |
+| Карточка клиента | `#view-client-detail` | Mock |
+| Шаблоны | `#view-templates` | Mock |
+| Аналитика | `#view-analytics` | Mock |
+| Настройки | `#view-settings` | Mock-каталог |
+| Детали настроек | `#view-settings-detail` | Заглушка |
 
-Неизвестный hash открывает список обращений (не отдельный 404).  
-Неизвестный `:id` обращения/клиента — состояние not-found на странице детали.
+---
 
-## Страницы
+## Функциональные возможности
 
-- Application shell: sidebar, header (hamburger ≤1024px, уведомления-кнопка, профиль «Администратор»)
-- Список обращений (таблица, toolbar, loading/empty)
-- Карточка обращения (статус, назначение, SLA, история, комментарии, вложения)
-- Flow «Новое обращение»
-- Клиенты / карточка клиента
-- Шаблоны / Аналитика / Настройки
+### Список обращений
+- Загрузка из `AppealsRepository` (14 mock-записей)
+- Поиск по номеру, теме, клиенту, исполнителю (`filterAppealsList`)
+- Фильтры: статус (3 значения UI), приоритет, «Не назначен»
+- Drawer фильтров (мобильный)
+- Состояния: loading / empty / loaded
+- Клик по строке → карточка
+- **NOT IMPLEMENTED:** пагинация (статическая вёрстка)
+- **NOT IMPLEMENTED:** KPI/дашборд на странице списка (README упоминает «показатели»)
 
-## Функции
+### Карточка обращения (`scripts/appeal-detail.js`)
+- Поля: описание, клиент, SLA, исполнитель, вложения, история
+- Смена статуса (`AppealsService.changeStatus` + матрица `STATUS_TRANSITIONS`)
+- Назначение / переназначение (модалка)
+- Принятие в работу (`acceptAppeal`)
+- Внутренние комментарии + вложения (`AttachmentValidator`)
+- **NOT IMPLEMENTED:** просмотр вложений (кнопки disabled)
 
-**Реализовано и доступно для проверки**
+### SLA (`scripts/services/sla-service.js`)
+- Состояния: ON_TRACK, AT_RISK (≤20% времени), OVERDUE, PAUSED
+- Отображение в списке и карточке
 
-- Навигация shell + active state
-- Collapse sidebar (desktop) + mobile off-canvas drawer
-- Список обращений: загрузка mock, колонки, открытие по клику/кнопке
-- Refresh списка (имитация loading)
-- Карточка обращения: fetch mock, not-found, back
-- Статусы: матрица `STATUS_TRANSITIONS`, UI select доступных переходов
-- Назначение / переназначение / принять в работу (с правами и валидацией причины)
-- SLA: ON_TRACK / AT_RISK / OVERDUE / PAUSED
-- Внутренние комментарии + вложения (валидация типа/размера/количества)
-- История/лента сообщений (INTERNAL visibility + права)
-- Mock-разделы: клиенты (поиск/фильтры), шаблоны (вкладки/поиск), аналитика (период/KPI), настройки (каталог readiness)
-- Deploy: GitHub Pages workflow `.github/workflows/static.yml`
+### Права (`scripts/services/permissions.js`)
+- Mock-пользователь: Администратор (`user-admin`) со всеми правами
+- Проверки: accept, changeStatus, assign, reassign, comments, attachments, client.*
 
-**Частично / UI без логики**
+### Mock-разделы
 
-- Поиск и фильтры на списке обращений — элементы есть, фильтрация таблицы не подключена
-- Пагинация списка — статическая разметка «Страница 1 из 1»
-- Кнопка уведомлений — без обработчика
-- Persistence изменений — только in-memory на сессию (без `localStorage` для appeals)
+| Раздел | Repository | Записей | CRUD |
+|---|---|---|---|
+| Клиенты | `clients-mock.js` | 9 | Read + фильтры |
+| Шаблоны | `templates-mock.js` | 6+6 | Read + вкладки |
+| Аналитика | `analytics-mock.js` | 3 периода | Read only |
+| Настройки | `settings-mock.js` | 15 секций | Read + заглушки |
 
-**Не реализовано на списке обращений**
-
-- KPI/дашборд-карточки количества обращений над таблицей (есть только в разделе «Аналитика»; README упоминает дашборд на списке)
+---
 
 ## Mock repositories
 
-| Модуль | Файл |
+| Файл | Назначение |
 |---|---|
-| AppealsRepository | `scripts/data/appeals-repository.js` (~14 обращений) |
-| Users / current user | `scripts/data/users-mock.js` |
-| Status catalog | `scripts/data/status-catalog.js` |
-| Message/attachment constants | `scripts/data/message-constants.js` |
-| ClientsRepository | `scripts/data/clients-mock.js` |
-| TemplatesRepository | `scripts/data/templates-mock.js` |
-| AnalyticsRepository | `scripts/data/analytics-mock.js` |
-| SettingsRepository | `scripts/data/settings-mock.js` |
+| `scripts/data/appeals-repository.js` | In-memory обращения, сообщения, вложения |
+| `scripts/data/clients-mock.js` | Клиенты, документы, история |
+| `scripts/data/templates-mock.js` | Шаблоны ответов и документов |
+| `scripts/data/analytics-mock.js` | KPI, графики (CSS bars) |
+| `scripts/data/settings-mock.js` | Каталог админ-разделов |
+| `scripts/data/users-mock.js` | Исполнители + CURRENT_USER |
+| `scripts/data/status-catalog.js` | 9 статусов + матрица переходов |
+| `scripts/data/message-constants.js` | Типы сообщений, лимиты вложений |
 
-Сервисы: `AppealsService`, `SlaService`, `Permissions`, `ClientsService`.
+---
 
-## Реализованные права
+## Статусы и переходы
 
-Текущий пользователь: администратор с полным набором permissions, включая:
+9 кодов: `NEW`, `SYSTEM_REVIEW`, `ASSIGNED`, `IN_PROGRESS`, `WAITING_SPECIALIST`, `WAITING_CLIENT`, `RESPONSE_SENT`, `CLOSED`, `REOPENED`.
 
-- `appeal.accept`, `appeal.changeStatus`, `appeal.assign`, `appeal.reassign`
-- `appeal.addInternalComment`, `appeal.addAttachment`, `appeal.viewInternalComments`
-- `client.view`, `client.viewAppeals`, `client.viewDocuments`, `client.viewInternalInfo`
+Матрица — `STATUS_TRANSITIONS` в `status-catalog.js`. Подробнее: `docs/status-transition-matrix.md`.
 
-Переключение ролей в UI отсутствует (проверка недостаточных прав — только через подмену actor в коде).
+---
 
-## Реализованные состояния
+## Shell / responsive
 
-**Статусы обращения:** NEW, SYSTEM_REVIEW, ASSIGNED, IN_PROGRESS, WAITING_SPECIALIST, WAITING_CLIENT, RESPONSE_SENT, CLOSED, REOPENED.
+- Sidebar collapse (desktop, localStorage)
+- Mobile sidebar overlay при `max-width: 1024px`
+- Breakpoints в CSS: **1280px**, **1024px**, **768px** (1440px — **NOT IMPLEMENTED**)
 
-**SLA:** ON_TRACK, AT_RISK, OVERDUE, PAUSED.
+---
 
-**UI states:** loading / empty / loaded / not-found (appeals list, appeal detail, client detail и mock-страницы через `PageUtils`).
+## Ассеты
 
-## Не реализовано
+| Путь | Статус |
+|---|---|
+| `assets/logo-fsk.png` | OK (HTTP 200) |
+| `styles/**/*.css` | OK |
+| `scripts/**/*.js` | OK (`node --check` — все 20 файлов) |
+| Абсолютные локальные пути | Не найдены |
 
-- `package.json`, npm/build pipeline, unit/e2e test framework
-- Backend API, реальная загрузка/скачивание файлов
-- Полноценная пагинация и рабочий поиск/фильтры списка обращений
-- KPI-дашборд на странице «Обращения»
-- CRUD в настройках
-- Переключение пользователя/ролей в UI
-- Автотесты
+---
 
-## Запуск
+## Автотесты
 
-- Зависимостей нет (статический прототип)
-- Локально: открыть `index.html` или `python3 -m http.server` из корня
-- Build: отсутствует (артефакт = корень репозитория)
-- Deploy: push в `master`/`main` → GitHub Pages
+**NOT IMPLEMENTED** — test framework, spec-файлы и npm scripts отсутствуют.
+
+---
+
+## Ограничения прототипа (не дефекты)
+
+- Нет backend/API
+- Нет chart library (CSS bars)
+- CRUD шаблонов/настроек — заглушки
+- Уведомления — UI без логики
+- Данные сессионные (in-memory, сброс при перезагрузке частично сохраняется через flow)

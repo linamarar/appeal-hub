@@ -1,253 +1,205 @@
-# План регрессионного тестирования
+# План регрессионного тестирования — Хаб обращений
 
-Охват: только функции из `current-scope.md`. Окружения: Local (static HTTP), Production (`https://appealhub.mararx.com/`).  
-Build-команда отсутствует — для «production build» используется проверка статической публикации / синтаксиса JS.
-
----
-
-## SETUP
-
-### RT-SETUP-01
-- **Раздел:** Установка/запуск
-- **Сценарий:** Отсутствие package manager / зависимостей
-- **Предусловия:** корень репозитория
-- **Шаги:** проверить наличие `package.json`
-- **Ожидаемый результат:** package.json отсутствует; установка зависимостей не требуется
-- **Приоритет:** P0
-
-### RT-SETUP-02
-- **Раздел:** Установка/запуск
-- **Сценарий:** Локальный статический сервер
-- **Предусловия:** Python 3
-- **Шаги:** `python3 -m http.server` из корня; открыть `/`
-- **Ожидаемый результат:** HTTP 200, приложение загружается
-- **Приоритет:** P0
-
-### RT-SETUP-03
-- **Раздел:** Установка/запуск
-- **Сценарий:** Синтаксис всех JS
-- **Предусловия:** Node.js
-- **Шаги:** `node --check` для каждого файла в `scripts/`
-- **Ожидаемый результат:** exit 0 без ошибок
-- **Приоритет:** P0
-
-### RT-SETUP-04
-- **Раздел:** Установка/запуск
-- **Сценарий:** Относительные пути assets/CSS/JS
-- **Предусловия:** локальный сервер
-- **Шаги:** запросить `index.html`, все `<script src>`, `<link href>`, `assets/logo-fsk.png`
-- **Ожидаемый результат:** все 200; нет абсолютных локальных путей
-- **Приоритет:** P0
-
-### RT-SETUP-05
-- **Раздел:** Установка/запуск
-- **Сценарий:** Опубликованный стенд доступен
-- **Предусловия:** сеть
-- **Шаги:** `curl -I https://appealhub.mararx.com/`
-- **Ожидаемый результат:** HTTP 200
-- **Приоритет:** P0
-
-### RT-SETUP-06
-- **Раздел:** Автотесты
-- **Сценарий:** Наличие test framework
-- **Предусловия:** —
-- **Шаги:** поиск test runner / `*test*`
-- **Ожидаемый результат:** framework отсутствует → NOT APPLICABLE для прогона
-- **Приоритет:** P2
+**Версия:** v0.1 прототип  
+**Дата:** 03.08.2026  
+**Ограничение:** без изменений production-кода; документирование дефектов only.
 
 ---
 
-## ROUTES
+## 1. Цели
 
-### RT-ROUTE-01 … RT-ROUTE-09
-Переходы через sidebar/UI и прямое открытие hash для: appeals, appeal detail, flow, clients, client detail, templates, analytics, settings, settings detail.  
-Ожидание: корректный view, shell сохранён, active state верный. Приоритет P1.
-
-### RT-ROUTE-10
-- Refresh на `#/appeals/:id` — карточка перезагружается. P1
-
-### RT-ROUTE-11
-- Back/Forward между разделами — hashhistory работает. P1
-
-### RT-ROUTE-12
-- Неизвестный hash `#/unknown` → список обращений. P2
-
-### RT-ROUTE-13
-- Неизвестный appeal id → not-found. P1
-
-### RT-ROUTE-14
-- Неизвестный client id → not-found. P2
-
-### RT-ROUTE-15
-- Production: те же hash-маршруты открываются. P1
+- Подтвердить работоспособность hash-маршрутизации и основных user flows
+- Проверить mock-разделы на соответствие коду
+- Выявить регрессии в списке обращений, карточке, SLA, назначениях
+- Оценить готовность к демо (GitHub Pages / custom domain)
 
 ---
 
-## SHELL
+## 2. Область тестирования
 
-### RT-SHELL-01
-Header: профиль «Администратор», логотип ФСК, название «Хаб обращений» в sidebar. P1
-
-### RT-SHELL-02
-Active state пунктов меню при переходах (включая client-detail → Клиенты, settings-detail → Настройки). P1
-
-### RT-SHELL-03
-Desktop collapse/expand sidebar + localStorage. P2
-
-### RT-SHELL-04
-Mobile ≤1024: hamburger, overlay, close, Escape, блокировка scroll. P2
-
-### RT-SHELL-05
-Кнопка `#sidebar-close` скрыта на desktop. P2
-
-### RT-SHELL-06
-Кнопка уведомлений присутствует, без обязательного действия (документировать фактическое поведение). P3
+| In scope | Out of scope |
+|---|---|
+| Статический фронтенд | Backend, API, БД |
+| Hash routes | E2E в CI |
+| Mock data / repositories | Установка npm-зависимостей |
+| A11y (HTML + JS handlers) | Полный аудит WCAG |
+| Responsive (CSS review) | Visual pixel-perfect vs Figma |
+| `node --check` всех JS | Исправление найденных багов |
 
 ---
 
-## LIST
+## 3. Окружение
 
-### RT-LIST-01
-Загрузка: loading → таблица с 14 обращениями, счётчик «Найдено». P1
-
-### RT-LIST-02
-Колонки: №, клиент, тема, статус, приоритет, исполнитель, SLA, дата, Открыть. P1
-
-### RT-LIST-03
-Колонка «Обновлено» показывает дату обновления (`updatedAt`). P2
-
-### RT-LIST-04
-Открытие строки / кнопки «Открыть» → карточка с тем же id. P1
-
-### RT-LIST-05
-Поиск по номеру фильтрует таблицу. P1
-
-### RT-LIST-06
-Поиск по теме фильтрует таблицу. P1
-
-### RT-LIST-07
-Пустой поиск / trim / без результатов / сброс. P2
-
-### RT-LIST-08
-Фильтр статус / приоритет / исполнитель / комбинация / сброс. P1
-
-### RT-LIST-09
-Пагинация листает страницы. P2
-
-### RT-LIST-10
-Refresh сохраняет актуальные данные после изменений в карточке (в рамках сессии). P1
-
-### RT-LIST-11
-После F5 изменения статусов/комментариев сохраняются. P2
+| Параметр | Значение |
+|---|---|
+| Локально | `python3 -m http.server 8765` из корня репозитория |
+| Браузер | Не использовался автоматически; curl + code review |
+| Production smoke | `curl` → `https://appealhub.mararx.com/` |
+| Node | `node --check scripts/**/*.js` |
 
 ---
 
-## DETAIL
+## 4. Критерии приоритетов дефектов
 
-### RT-DET-01
-Поля карточки: id, тема, описание, статус, приоритет, исполнитель, SLA, клиент, источник, история, вложения. P1
-
-### RT-DET-02
-Возврат «К списку». P1
-
-### RT-DET-03
-Прямой URL и refresh. P1
-
-### RT-DET-04
-Unknown id → not-found. P1
-
-### RT-DET-05
-Обращение без вложений / с историей отображается корректно. P2
+| Приоритет | Описание |
+|---|---|
+| **P0** | Блокер: приложение не загружается, критический маршрут недоступен |
+| **P1** | Основной flow сломан (список, карточка, навигация) |
+| **P2** | Функция частично работает или данные некорректны |
+| **P3** | UX, a11y, документация, косметика |
 
 ---
 
-## STATUS
+## 5. Тест-кейсы
 
-### RT-ST-01 … RT-ST-N
-Для разрешённых переходов из `STATUS_TRANSITIONS`: действие → новый статус → событие в истории → список обновлён (сессия). P1
+### 5.1 Setup / Build (BLD)
 
-### RT-ST-BLOCK
-Запрещённый переход отклоняется (`INVALID_TRANSITION`). P1
+| ID | Кейс | Ожидание |
+|---|---|---|
+| BLD-01 | Отсутствие `package.json` | Статический сайт, без сборки |
+| BLD-02 | `node --check` всех JS | Exit 0, синтаксис OK |
+| BLD-03 | `index.html` загружается | HTTP 200 |
+| BLD-04 | CSS/JS пути относительные | HTTP 200 для `styles/main.css`, `scripts/app.js` |
+| BLD-05 | `assets/logo-fsk.png` | HTTP 200 |
+| BLD-06 | Нет абсолютных локальных путей | grep — пусто |
 
-### RT-ST-ACCEPT
-Accept только из ASSIGNED → IN_PROGRESS. P1
+### 5.2 Маршрутизация (RT)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| RT-01 | `#/appeals` | View dashboard, таблица |
+| RT-02 | `#/` / пустой hash | → `#/appeals` |
+| RT-03 | `#/appeals/AH-2026-01847` | Карточка загружена |
+| RT-04 | `#/appeals/UNKNOWN` | Empty state «не найдено» |
+| RT-05 | `#/clients` | Список 9 клиентов |
+| RT-06 | `#/clients/CL-001` | Карточка клиента |
+| RT-07 | `#/clients/UNKNOWN` | Not found |
+| RT-08 | `#/templates` | Таблица шаблонов |
+| RT-09 | `#/analytics` | KPI mock |
+| RT-10 | `#/settings` | Каталог 15 секций |
+| RT-11 | `#/settings/priorities` | Заглушка detail |
+| RT-12 | `#/settings/unknown-slug` | «Раздел не найден» |
+| RT-13 | `#/flow` | Flow создания |
+| RT-14 | `#/unknown-path` | Fallback → dashboard |
+| RT-15 | Production URL | HTTP 200 |
+
+### 5.3 Список обращений (APL)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| APL-01 | Загрузка списка | 14 записей в repository |
+| APL-02 | Поиск по ID | Фильтрация |
+| APL-03 | Фильтр статус «Новая» | Только NEW |
+| APL-04 | Фильтр приоритет | По exact match |
+| APL-05 | Фильтр «Не назначен» | Без assigneeId |
+| APL-06 | Сброс фильтров | Полный список |
+| APL-07 | Drawer фильтров | Sync + close Escape |
+| APL-08 | Refresh | Loading → reload |
+| APL-09 | Клик строки | Navigate detail |
+| APL-10 | Пагинация | NOT IMPLEMENTED — статика |
+| APL-11 | KPI дашборд | NOT IMPLEMENTED |
+
+### 5.4 Карточка обращения (APD)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| APD-01 | Отображение полей | title, client, SLA, history |
+| APD-02 | Назначение исполнителя | NEW → ASSIGNED |
+| APD-03 | Переназначение + причина | History event |
+| APD-04 | Принять в работу | ASSIGNED → IN_PROGRESS |
+| APD-05 | Смена статуса | По матрице |
+| APD-06 | Недопустимый переход | Error message |
+| APD-07 | Комментарий | Timeline update |
+| APD-08 | Вложение в комментарии | Validation limits |
+| APD-09 | Просмотр вложений | NOT IMPLEMENTED (disabled) |
+| APD-10 | Not found ID | Empty state |
+
+### 5.5 SLA / Статусы (SLA)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| SLA-01 | ON_TRACK | label «В срок» |
+| SLA-02 | AT_RISK | ≤20% оставшегося времени |
+| SLA-03 | OVERDUE | dueAt < now |
+| SLA-04 | PAUSED | slaState === PAUSED |
+| SLA-05 | Матрица переходов | Соответствует status-catalog |
+
+### 5.6 Mock-разделы (MCK)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| MCK-01 | Clients search | Фильтрация |
+| MCK-02 | Clients type filter | По clientType |
+| MCK-03 | Client detail tabs | appeals/docs/history |
+| MCK-04 | Templates tabs | responses/documents |
+| MCK-05 | Templates search | Filter by name |
+| MCK-06 | Analytics periods | 7d/30d/quarter |
+| MCK-07 | Settings PLANNED | disabled |
+| MCK-08 | Settings MOCK/AVAILABLE | Navigate detail stub |
+| MCK-09 | Create template btn | disabled + tooltip |
+
+### 5.7 Flow (FLW)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| FLW-01 | Upload file | Preview step |
+| FLW-02 | AI simulation | Step 2 → 3 |
+| FLW-03 | Create appeal | addAppealFromFlow |
+| FLW-04 | Discard draft | confirm on navigate away |
+| FLW-05 | Open created card | Dynamic appeal ID |
+
+### 5.8 Shell / Responsive (SHL)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| SHL-01 | Sidebar collapse desktop | localStorage |
+| SHL-02 | Mobile menu ≤1024px | Overlay + Escape |
+| SHL-03 | Breakpoint 1280px | appeals-list.css |
+| SHL-04 | Breakpoint 1024px | shell.css |
+| SHL-05 | Breakpoint 1440px | NOT IMPLEMENTED |
+| SHL-06 | Nav active states | Correct highlight |
+
+### 5.9 Accessibility (A11Y)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| A11Y-01 | Sidebar aria-label | Present |
+| A11Y-02 | Modal aria-labelledby | assign-modal |
+| A11Y-03 | Drawer Escape | Closes |
+| A11Y-04 | Modal Escape | Expected close |
+| A11Y-05 | Search aria-label | appeals-search |
+| A11Y-06 | Tabs aria-selected | templates |
+| A11Y-07 | Pagination aria-label | Present |
+| A11Y-08 | Focus trap in modal | Expected trap |
+
+### 5.10 Static analysis (STA)
+
+| ID | Кейс | Ожидание |
+|---|---|---|
+| STA-01 | console.error в scripts | Не найдено |
+| STA-02 | Undefined globals | Script order OK (no modules) |
+| STA-03 | 404-prone assets | Все ссылки в index.html OK |
 
 ---
 
-## ASSIGN
+## 6. Критерии входа / выхода
 
-### RT-AS-01
-Назначение на NEW → ASSIGNED + исполнитель. P1
+**Вход:** актуальная ветка master, docs/testing/ пустая или обновляемая.
 
-### RT-AS-02
-В списке назначения нет inactive/absent. P2
-
-### RT-AS-03
-Переназначение требует причину; «Другое» требует текст. P1
-
-### RT-AS-04
-Событие истории со старым/новым исполнителем. P1
+**Выход:**
+- Все P0/P1 задокументированы
+- regression-results.md заполнен
+- release-readiness.md с вердиктом
 
 ---
 
-## SLA
+## 7. Роли и метод
 
-### RT-SLA-01 … RT-SLA-04
-Примеры ON_TRACK, AT_RISK, OVERDUE, PAUSED в UI (текст + не только цвет). P2
+| Активность | Метод |
+|---|---|
+| Маршруты | Code analysis + curl index |
+| UI flows | Code analysis (browser N/A в автоматическом прогоне) |
+| A11y | HTML/JS grep |
+| Responsive | CSS @media review |
 
----
-
-## COMMENTS / ATTACHMENTS
-
-### RT-COM-01
-Комментарий с текстом → в ленте, форма очищена. P1
-
-### RT-COM-02
-Только файл / пустой / пробелы → валидация. P1
-
-### RT-COM-03
-maxlength 5000. P2
-
-### RT-COM-04
-Повторный submit блокируется во время loading. P2
-
-### RT-ATT-01
-Запрещённый тип / >20МБ / >10 файлов / >50МБ суммарно — ошибка. P1
-
-### RT-ATT-02
-Удаление файла до отправки. P2
-
-### RT-ATT-03
-Кириллица / длинное имя отображаются. P3
-
-### RT-ATT-04
-Кнопка открытия ведёт на mock URL (зафиксировать фактическое поведение). P2
-
----
-
-## MOCK SECTIONS
-
-### RT-CLI-01…05
-Клиенты: открытие, данные, поиск, фильтры, карточка «Открыть». P2
-
-### RT-TPL-01…03
-Шаблоны: вкладки, поиск, disabled действия. P2
-
-### RT-AN-01…03
-Аналитика: KPI, период, подпись демо-данных. P2
-
-### RT-SET-01…03
-Настройки: каталог, readiness, клик PLANNED disabled, detail-заглушка. P2
-
----
-
-## RESPONSIVE / A11Y / VISUAL
-
-### RT-RESP-01…03
-1440×900, 1280×800, 1024×768 — shell/toolbar/таблица без критичных наложений. P2
-
-### RT-A11Y-01
-aria-label у icon buttons, Escape для drawer/modal, focus-visible у кнопок. P2
-
-### RT-VIS-01
-Единый shell/токены; KPI-дашборд на списке обращений отсутствует относительно README. P3
+**Ограничение:** без headless browser — runtime UI не верифицирован визуально; отмечено в results.
