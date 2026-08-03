@@ -79,8 +79,16 @@ function switchView(viewId) {
   document.querySelectorAll('.view').forEach((v) => v.classList.remove('view--active'));
   const target = document.getElementById(`view-${viewId}`);
   if (target) target.classList.add('view--active');
+  const navActiveMap = {
+    dashboard: ['dashboard'],
+    clients: ['clients', 'client-preview'],
+    templates: ['templates'],
+    analytics: ['analytics'],
+    settings: ['settings', 'settings-detail'],
+  };
   document.querySelectorAll('.shell-nav__item[data-view]').forEach((n) => {
-    n.classList.toggle('is-active', n.dataset.view === viewId);
+    const group = navActiveMap[n.dataset.view] || [n.dataset.view];
+    n.classList.toggle('is-active', group.includes(viewId));
   });
 }
 
@@ -88,17 +96,41 @@ function parseRoute() {
   const hash = location.hash.slice(1) || '/appeals';
   const appealMatch = hash.match(/^\/appeals\/([^/?#]+)$/);
   if (appealMatch) return { view: 'appeal-detail', appealId: decodeURIComponent(appealMatch[1]) };
+  const clientMatch = hash.match(/^\/clients\/([^/?#]+)$/);
+  if (clientMatch) return { view: 'client-preview', clientId: decodeURIComponent(clientMatch[1]) };
+  const settingsMatch = hash.match(/^\/settings\/([^/?#]+)$/);
+  if (settingsMatch) return { view: 'settings-detail', settingsSlug: decodeURIComponent(settingsMatch[1]) };
   if (hash === '/flow') return { view: 'flow' };
+  if (hash === '/clients') return { view: 'clients' };
+  if (hash === '/templates') return { view: 'templates' };
+  if (hash === '/analytics') return { view: 'analytics' };
+  if (hash === '/settings') return { view: 'settings' };
   return { view: 'dashboard' };
 }
+
+const ROUTE_HASH = {
+  dashboard: '/appeals',
+  flow: '/flow',
+  clients: '/clients',
+  templates: '/templates',
+  analytics: '/analytics',
+  settings: '/settings',
+};
 
 function navigate(view, params = {}) {
   if (view === 'appeal-detail' && params.appealId) {
     location.hash = `/appeals/${encodeURIComponent(params.appealId)}`;
     return;
   }
-  if (view === 'flow') { location.hash = '/flow'; return; }
-  location.hash = '/appeals';
+  if (view === 'client-preview' && params.clientId) {
+    location.hash = `/clients/${encodeURIComponent(params.clientId)}`;
+    return;
+  }
+  if (view === 'settings-detail' && params.settingsSlug) {
+    location.hash = `/settings/${encodeURIComponent(params.settingsSlug)}`;
+    return;
+  }
+  location.hash = ROUTE_HASH[view] || '/appeals';
 }
 
 function handleRoute() {
@@ -106,6 +138,12 @@ function handleRoute() {
   switchView(route.view);
   if (route.view === 'appeal-detail') AppealDetailPage.load(route.appealId);
   if (route.view === 'dashboard') renderTable();
+  if (route.view === 'clients') ClientsPage.load();
+  if (route.view === 'client-preview') ClientsPage.loadPreview(route.clientId);
+  if (route.view === 'templates') TemplatesPage.load();
+  if (route.view === 'analytics') AnalyticsPage.load();
+  if (route.view === 'settings') SettingsPage.load();
+  if (route.view === 'settings-detail') SettingsPage.loadDetail(route.settingsSlug);
   if (route.view === 'flow') {
     setFlowStep(1);
     const uploadZone = document.getElementById('upload-zone');
@@ -298,18 +336,22 @@ function initMobileSidebar() {
 }
 
 function initNavigation() {
-  document.querySelectorAll('[data-view]').forEach((el) => {
+  document.querySelectorAll('.shell-nav__item[data-view]').forEach((el) => {
     el.addEventListener('click', () => {
       if (el.disabled) return;
-      navigate(el.dataset.view === 'flow' ? 'flow' : 'dashboard');
+      navigate(el.dataset.view);
     });
   });
   document.addEventListener('click', (e) => {
     const trigger = e.target.closest('[data-go]');
-    if (!trigger) return;
+    if (!trigger || trigger.disabled) return;
     const view = trigger.dataset.go;
     const appealId = trigger.dataset.appealId;
+    const clientId = trigger.dataset.clientId;
+    const settingsSlug = trigger.dataset.settingsSlug;
     if (view === 'appeal-detail' && appealId) navigate('appeal-detail', { appealId });
+    else if (view === 'client-preview' && clientId) navigate('client-preview', { clientId });
+    else if (view === 'settings-detail' && settingsSlug) navigate('settings-detail', { settingsSlug });
     else navigate(view);
   });
   const tbody = document.getElementById('appeals-table-body');
