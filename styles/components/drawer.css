@@ -1,0 +1,93 @@
+/* Figma: Drawer pattern (mobile filters panel) */
+
+.ui-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  pointer-events: none;
+}
+
+.ui-drawer.is-open {
+  display: block;
+  pointer-events: auto;
+}
+
+.ui-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.ui-drawer.is-open .ui-drawer__backdrop {
+  opacity: 1;
+}
+
+.ui-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(360px, 100%);
+  height: 100%;
+  background: var(--color-background-surface);
+  box-shadow: var(--shadow-elevation-sm);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.ui-drawer.is-open .ui-drawer__panel {
+  transform: translateX(0);
+}
+
+.ui-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  flex-shrink: 0;
+  padding: var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ui-drawer__title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-heading-xs);
+  font-weight: var(--font-weight-heading-xs);
+  color: var(--color-text-primary);
+}
+
+.ui-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+.ui-drawer__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  flex-shrink: 0;
+  padding: var(--spacing-5);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ui-drawer__footer .ui-button--primary {
+  margin-left: auto;
+}
+
+.ui-select--block {
+  width: 100%;
+  min-width: 0;
+}
+
+body.ui-drawer-open {
+  overflow: hidden;
+}

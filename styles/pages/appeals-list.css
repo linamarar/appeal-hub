@@ -49,13 +49,26 @@
   max-width: 360px;
 }
 
-.appeals-toolbar__filters .ui-select {
+.appeals-toolbar__filters-toggle {
+  display: none;
+  flex-shrink: 0;
+}
+
+.appeals-toolbar__inline-filters {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
+.appeals-toolbar__inline-filters .ui-select {
   flex: 0 0 auto;
   width: auto;
   min-width: 148px;
 }
 
-.appeals-toolbar__filters .ui-button {
+.appeals-toolbar__inline-filters .ui-button {
   flex-shrink: 0;
 }
 
@@ -89,7 +102,7 @@
     max-width: 280px;
   }
 
-  .appeals-toolbar__filters .ui-select {
+  .appeals-toolbar__inline-filters .ui-select {
     min-width: 132px;
   }
 }
@@ -111,5 +124,25 @@
   .appeals-toolbar__filters .ui-search-input {
     flex: 1 1 100%;
     max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .appeals-toolbar__filters {
+    flex-wrap: nowrap;
+  }
+
+  .appeals-toolbar__filters .ui-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .appeals-toolbar__filters-toggle {
+    display: inline-flex;
+  }
+
+  .appeals-toolbar__inline-filters {
+    display: none;
   }
 }
