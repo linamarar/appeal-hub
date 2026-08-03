@@ -1,0 +1,46 @@
+/* Figma: Tabs */
+
+.ui-tabs {
+  display: flex;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ui-tabs__tab {
+  position: relative;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-body-md);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.ui-tabs__tab:hover {
+  color: var(--color-text-primary);
+}
+
+.ui-tabs__tab.is-active {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-heading-xs);
+}
+
+.ui-tabs__tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-action-primary);
+  border-radius: var(--radius-full);
+}
+
+.ui-tabs__tab:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

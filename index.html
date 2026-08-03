@@ -23,9 +23,13 @@
   <link rel="stylesheet" href="styles/components/timeline.css" />
   <link rel="stylesheet" href="styles/components/modal.css" />
   <link rel="stylesheet" href="styles/components/drawer.css" />
+  <link rel="stylesheet" href="styles/components/page-layout.css" />
+  <link rel="stylesheet" href="styles/components/tabs.css" />
   <link rel="stylesheet" href="styles/layout/shell.css" />
   <link rel="stylesheet" href="styles/pages/appeals-list.css" />
   <link rel="stylesheet" href="styles/pages/appeal-detail.css" />
+  <link rel="stylesheet" href="styles/pages/analytics.css" />
+  <link rel="stylesheet" href="styles/pages/settings.css" />
   <link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
@@ -48,19 +52,19 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           <span>Обращения</span>
         </button>
-        <button type="button" class="shell-nav__item" disabled>
+        <button type="button" class="shell-nav__item" data-view="clients" title="Клиенты">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>Клиенты</span>
         </button>
-        <button type="button" class="shell-nav__item" disabled>
+        <button type="button" class="shell-nav__item" data-view="templates" title="Шаблоны">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
           <span>Шаблоны</span>
         </button>
-        <button type="button" class="shell-nav__item" disabled>
+        <button type="button" class="shell-nav__item" data-view="analytics" title="Аналитика">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span>Аналитика</span>
         </button>
-        <button type="button" class="shell-nav__item" disabled>
+        <button type="button" class="shell-nav__item" data-view="settings" title="Настройки">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span>Настройки</span>
         </button>
@@ -376,6 +380,49 @@
             <div id="appeal-detail-content"></div>
           </div>
         </section>
+
+        <section class="view" id="view-clients">
+          <header class="ui-page__header"><div><h1 class="ui-page__title">Клиенты</h1><p class="ui-page__desc">Клиенты, их обращения и история взаимодействия</p></div></header>
+          <div class="ui-page__toolbar">
+            <div class="ui-page__toolbar-row">
+              <label class="ui-search-input"><span class="ui-search-input__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="search" id="clients-search" placeholder="Поиск по имени, email или договору…" autocomplete="off" /></label>
+              <select class="ui-select" id="clients-type-filter" aria-label="Тип клиента"><option value="">Все типы</option><option value="Физическое лицо">Физическое лицо</option><option value="Юридическое лицо">Юридическое лицо</option><option value="Управляющая компания">Управляющая компания</option></select>
+              <select class="ui-select" id="clients-open-filter" aria-label="Открытые обращения"><option value="">Все клиенты</option><option value="yes">Есть открытые</option><option value="no">Нет открытых</option></select>
+              <button type="button" class="ui-button ui-button--ghost ui-button--sm" id="clients-filters-reset">Сбросить</button>
+            </div>
+            <p class="ui-page__meta" id="clients-count">Найдено клиентов: —</p>
+          </div>
+          <div class="ui-page-state-panel" id="clients-loading" data-state="loading"><div class="ui-loader"><div class="ui-loader__spinner" role="status"></div><p class="ui-loader__text">Загрузка клиентов…</p></div></div>
+          <div class="ui-page-state-panel" id="clients-empty" data-state="empty"><div class="ui-empty-state"><h2 class="ui-empty-state__title">Клиенты не найдены</h2><p class="ui-empty-state__text">Измените параметры поиска или фильтрации.</p></div></div>
+          <div class="ui-page-data-panel" id="clients-data"><div class="ui-data-table-wrap"><table class="ui-data-table"><thead><tr><th>Клиент</th><th>Контакты</th><th>Объект / договор</th><th>Всего</th><th>Открытые</th><th>Активность</th><th>Статус</th><th></th></tr></thead><tbody id="clients-table-body"></tbody></table></div></div>
+        </section>
+
+        <section class="view" id="view-client-preview"><div id="client-preview-content"></div></section>
+
+        <section class="view" id="view-templates">
+          <header class="ui-page__header"><div><h1 class="ui-page__title">Шаблоны</h1><p class="ui-page__desc">Шаблоны ответов и документов для обработки обращений</p></div><div class="ui-page__actions"><span class="ui-tooltip"><button type="button" class="ui-button ui-button--primary ui-button--md" disabled>Создать шаблон</button><span class="ui-tooltip__bubble">Будет реализовано на следующем этапе</span></span></div></header>
+          <div class="ui-tabs" role="tablist"><button type="button" class="ui-tabs__tab is-active" role="tab" data-tab="responses" aria-selected="true">Ответы</button><button type="button" class="ui-tabs__tab" role="tab" data-tab="documents" aria-selected="false">Документы</button></div>
+          <div class="ui-page__toolbar"><div class="ui-page__toolbar-row"><label class="ui-search-input"><span class="ui-search-input__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="search" id="templates-search" placeholder="Поиск по названию…" autocomplete="off" /></label><select class="ui-select" id="templates-status-filter" aria-label="Статус"><option value="">Все статусы</option><option value="PUBLISHED">Опубликован</option><option value="DRAFT">Черновик</option><option value="ARCHIVED">Архивный</option></select><button type="button" class="ui-button ui-button--ghost ui-button--sm" id="templates-filters-reset">Сбросить</button></div><p class="ui-page__meta" id="templates-count">Найдено: —</p></div>
+          <div class="ui-page-state-panel" id="templates-loading" data-state="loading"><div class="ui-loader"><div class="ui-loader__spinner" role="status"></div><p class="ui-loader__text">Загрузка шаблонов…</p></div></div>
+          <div class="ui-page-state-panel" id="templates-empty" data-state="empty"><div class="ui-empty-state"><h2 class="ui-empty-state__title">Шаблоны не найдены</h2></div></div>
+          <div class="ui-page-data-panel" id="templates-data"><div class="ui-data-table-wrap"><table class="ui-data-table"><thead id="templates-table-head"></thead><tbody id="templates-table-body"></tbody></table></div></div>
+        </section>
+
+        <section class="view" id="view-analytics">
+          <header class="ui-page__header"><div><h1 class="ui-page__title">Аналитика</h1><p class="ui-page__desc">Ключевые показатели обработки обращений</p></div></header>
+          <p class="analytics-demo-note">Демонстрационные данные</p>
+          <div class="analytics-period"><button type="button" class="analytics-period__btn" data-period="7d">7 дней</button><button type="button" class="analytics-period__btn is-active" data-period="30d">30 дней</button><button type="button" class="analytics-period__btn" data-period="quarter">Квартал</button></div>
+          <div class="ui-page-state-panel" id="analytics-loading" data-state="loading"><div class="ui-loader"><div class="ui-loader__spinner" role="status"></div></div></div>
+          <div class="ui-page-data-panel" id="analytics-data"><div class="analytics-kpis" id="analytics-kpis"></div><div class="analytics-grid"><div class="ui-card"><div class="ui-card__header"><span class="ui-card__title">По статусам</span></div><div class="ui-card__body" id="analytics-by-status"></div></div><div class="ui-card"><div class="ui-card__header"><span class="ui-card__title">По тематикам</span></div><div class="ui-card__body" id="analytics-by-topic"></div></div><div class="ui-card"><div class="ui-card__header"><span class="ui-card__title">По источникам</span></div><div class="ui-card__body" id="analytics-by-source"></div></div><div class="ui-card"><div class="ui-card__header"><span class="ui-card__title">SLA</span></div><div class="ui-card__body" id="analytics-sla"></div></div><div class="ui-card"><div class="ui-card__header"><span class="ui-card__title">Нагрузка</span></div><div class="ui-card__body ui-card__body--compact"><table class="ui-data-table"><thead><tr><th>Исполнитель</th><th>Обращений</th></tr></thead><tbody id="analytics-assignee-body"></tbody></table></div></div><div class="ui-card"><div class="ui-card__header"><span class="ui-card__title">Динамика</span></div><div class="ui-card__body" id="analytics-dynamics"></div></div></div></div>
+        </section>
+
+        <section class="view" id="view-settings">
+          <header class="ui-page__header"><div><h1 class="ui-page__title">Настройки</h1><p class="ui-page__desc">Настройка правил и справочников Хаба обращений</p></div></header>
+          <div class="ui-page-state-panel" id="settings-loading" data-state="loading"><div class="ui-loader"><div class="ui-loader__spinner" role="status"></div></div></div>
+          <div class="ui-page-data-panel" id="settings-data"><div class="settings-catalog" id="settings-catalog"></div></div>
+        </section>
+
+        <section class="view" id="view-settings-detail"><div id="settings-detail-content"></div></section>
       </div>
     </div>
   </div>
