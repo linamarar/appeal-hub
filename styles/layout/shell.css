@@ -108,9 +108,23 @@
 }
 
 .shell-sidebar__version {
-  padding: 0 var(--spacing-4) var(--spacing-3);
   font-size: var(--font-size-body-md);
   color: var(--color-text-inverse-muted);
+}
+
+.shell-sidebar__meta {
+  padding: var(--spacing-3) var(--spacing-4) 0;
+}
+
+.shell-sidebar__meta-title {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-heading-xs);
+  color: var(--color-text-inverse-muted);
+  line-height: var(--line-height-body-sm);
+}
+
+.shell-sidebar__meta .shell-sidebar__version {
+  margin-top: var(--spacing-1);
 }
 
 .shell-sidebar__toggle {
@@ -238,6 +252,7 @@
 .app-shell--sidebar-collapsed .shell-sidebar__brand-text,
 .app-shell--sidebar-collapsed .shell-sidebar__subtitle,
 .app-shell--sidebar-collapsed .shell-nav__item span,
+.app-shell--sidebar-collapsed .shell-sidebar__meta,
 .app-shell--sidebar-collapsed .shell-sidebar__version,
 .app-shell--sidebar-collapsed .shell-sidebar__toggle span {
   display: none;
@@ -271,6 +286,7 @@
   .shell-sidebar__brand-text,
   .shell-sidebar__subtitle,
   .shell-nav__item span,
+  .shell-sidebar__meta,
   .shell-sidebar__version,
   .shell-sidebar__toggle span {
     display: none;
