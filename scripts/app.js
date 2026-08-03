@@ -94,9 +94,15 @@ function filterAppealsList(appeals) {
 
   return appeals.filter((appeal) => {
     if (query) {
-      const id = String(appeal.id || '').toLowerCase();
-      const title = String(appeal.title || '').toLowerCase();
-      if (!id.includes(query) && !title.includes(query)) return false;
+      const haystack = [
+        appeal.id,
+        appeal.title,
+        appeal.client?.name,
+        appeal.assigneeName,
+      ]
+        .map((value) => String(value || '').toLowerCase())
+        .join(' ');
+      if (!haystack.includes(query)) return false;
     }
 
     if (statusLabel) {
@@ -144,7 +150,7 @@ function switchView(viewId) {
   const target = document.getElementById(`view-${viewId}`);
   if (target) target.classList.add('view--active');
   const navActiveMap = {
-    dashboard: ['dashboard'],
+    dashboard: ['dashboard', 'flow'],
     clients: ['clients', 'client-detail'],
     templates: ['templates'],
     analytics: ['analytics'],
@@ -182,6 +188,10 @@ const ROUTE_HASH = {
 };
 
 function navigate(view, params = {}) {
+  if (currentView === 'flow' && view !== 'flow' && hasFlowDraft()) {
+    if (!leaveFlowIfAllowed()) return;
+  }
+
   if (view === 'appeal-detail' && params.appealId) {
     location.hash = `/appeals/${encodeURIComponent(params.appealId)}`;
     return;
@@ -197,8 +207,70 @@ function navigate(view, params = {}) {
   location.hash = ROUTE_HASH[view] || '/appeals';
 }
 
+const FLOW_DISCARD_MESSAGE = 'Сбросить черновик обращения? Несохранённые данные будут потеряны.';
+
+let currentView = null;
+let ignoreNextHashChange = false;
+let flowAiLogInitialHtml = '';
+const flowState = {
+  step: 1,
+  dirty: false,
+  completed: false,
+};
+
+function hasFlowDraft() {
+  return flowState.dirty && !flowState.completed;
+}
+
+function markFlowDirty() {
+  flowState.dirty = true;
+  flowState.completed = false;
+}
+
+function resetFlowDraft() {
+  flowState.step = 1;
+  flowState.dirty = false;
+  flowState.completed = false;
+  setFlowStep(1);
+
+  const uploadZone = document.getElementById('upload-zone');
+  const incomingPreview = document.getElementById('incoming-preview');
+  const fileInput = document.getElementById('file-input');
+  if (uploadZone) uploadZone.hidden = false;
+  if (incomingPreview) incomingPreview.hidden = true;
+  if (fileInput) fileInput.value = '';
+
+  const aiLog = document.querySelector('#view-flow .ai-log');
+  if (aiLog && flowAiLogInitialHtml) aiLog.innerHTML = flowAiLogInitialHtml;
+
+  const card = document.getElementById('new-appeal-card');
+  if (card) card.innerHTML = '';
+}
+
+function confirmDiscardFlowDraft() {
+  return window.confirm(FLOW_DISCARD_MESSAGE);
+}
+
+function leaveFlowIfAllowed() {
+  if (!hasFlowDraft()) return true;
+  if (!confirmDiscardFlowDraft()) return false;
+  resetFlowDraft();
+  return true;
+}
+
 function handleRoute() {
   const route = parseRoute();
+
+  if (currentView === 'flow' && route.view !== 'flow' && hasFlowDraft()) {
+    if (!confirmDiscardFlowDraft()) {
+      ignoreNextHashChange = true;
+      location.hash = '/flow';
+      return;
+    }
+    resetFlowDraft();
+  }
+
+  const enteringFlow = route.view === 'flow' && currentView !== 'flow';
   switchView(route.view);
   if (route.view === 'appeal-detail') AppealDetailPage.load(route.appealId);
   if (route.view === 'dashboard') renderTable();
@@ -208,16 +280,14 @@ function handleRoute() {
   if (route.view === 'analytics') AnalyticsPage.load();
   if (route.view === 'settings') SettingsPage.load();
   if (route.view === 'settings-detail') SettingsPage.loadDetail(route.settingsSlug);
-  if (route.view === 'flow') {
-    setFlowStep(1);
-    const uploadZone = document.getElementById('upload-zone');
-    const incomingPreview = document.getElementById('incoming-preview');
-    if (uploadZone) uploadZone.hidden = false;
-    if (incomingPreview) incomingPreview.hidden = true;
+  if (route.view === 'flow' && enteringFlow) {
+    resetFlowDraft();
   }
+  currentView = route.view;
 }
 
 function setFlowStep(step) {
+  flowState.step = step;
   document.querySelectorAll('.flow-panel').forEach((p) => p.classList.remove('flow-panel--active'));
   const panel = document.getElementById(`flow-step-${step}`);
   if (panel) panel.classList.add('flow-panel--active');
@@ -230,12 +300,15 @@ function setFlowStep(step) {
 }
 
 function simulateAIProcessing() {
+  markFlowDirty();
   setFlowStep(2);
   const lastItem = document.querySelector('.ai-log__item--active');
+  if (!lastItem) return;
   setTimeout(() => {
     lastItem.classList.remove('ai-log__item--active');
     lastItem.classList.add('ai-log__item--done');
-    lastItem.querySelector('.ai-log__spinner').outerHTML = '<span class="ai-log__check">✓</span>';
+    const spinner = lastItem.querySelector('.ai-log__spinner');
+    if (spinner) spinner.outerHTML = '<span class="ai-log__check">✓</span>';
     lastItem.textContent = '';
     lastItem.insertAdjacentHTML('afterbegin', '<span class="ai-log__check">✓</span> Извлечены структурированные данные');
     setTimeout(() => {
@@ -246,6 +319,8 @@ function simulateAIProcessing() {
       setTimeout(() => {
         renderFlowAppealCard(document.getElementById('new-appeal-card'), appealCardData);
         setFlowStep(3);
+        flowState.completed = true;
+        flowState.dirty = false;
         const list = AppealsService.getList();
         if (!list.find((a) => a.isNew)) {
           AppealsRepository.addAppealFromFlow(appealCardData);
@@ -261,15 +336,33 @@ function initFlow() {
   const fileInput = document.getElementById('file-input');
   const incomingPreview = document.getElementById('incoming-preview');
   if (!uploadZone || !fileInput) return;
+
+  const aiLog = document.querySelector('#view-flow .ai-log');
+  if (aiLog) flowAiLogInitialHtml = aiLog.innerHTML;
+
+  const showIncomingPreview = () => {
+    uploadZone.hidden = true;
+    incomingPreview.hidden = false;
+    markFlowDirty();
+  };
+
   document.getElementById('btn-upload').addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', () => { uploadZone.hidden = true; incomingPreview.hidden = false; });
+  fileInput.addEventListener('change', () => {
+    if (!fileInput.files?.length) return;
+    showIncomingPreview();
+  });
   uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('upload-zone--dragover'); });
   uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('upload-zone--dragover'));
   uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault(); uploadZone.classList.remove('upload-zone--dragover');
-    uploadZone.hidden = true; incomingPreview.hidden = false;
+    e.preventDefault();
+    uploadZone.classList.remove('upload-zone--dragover');
+    showIncomingPreview();
   });
   document.getElementById('btn-start-ai').addEventListener('click', simulateAIProcessing);
+  document.getElementById('flow-back')?.addEventListener('click', () => {
+    if (!leaveFlowIfAllowed()) return;
+    navigate('dashboard');
+  });
 }
 
 function syncFilterSelects(sourceRoot, targetRoot) {
@@ -459,7 +552,13 @@ function initNavigation() {
       if (row) navigate('appeal-detail', { appealId: row.dataset.appealId });
     });
   }
-  window.addEventListener('hashchange', handleRoute);
+  window.addEventListener('hashchange', () => {
+    if (ignoreNextHashChange) {
+      ignoreNextHashChange = false;
+      return;
+    }
+    handleRoute();
+  });
   document.getElementById('filters-reset')?.addEventListener('click', resetAppealsFilters);
   document.getElementById('appeals-refresh')?.addEventListener('click', () => {
     setListState('loading');

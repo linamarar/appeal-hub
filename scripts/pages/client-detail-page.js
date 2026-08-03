@@ -101,14 +101,14 @@ const ClientDetailPage = (() => {
         <div class="ui-card">
           <div class="ui-card__header"><span class="ui-card__title">Контактная информация</span></div>
           <div class="ui-card__body">
-            <dl class="ui-meta-list">
-              <div class="ui-meta-list__row"><dt>Телефон</dt><dd>${PageUtils.escapeHtml(client.phone || 'Не указано')}</dd></div>
-              <div class="ui-meta-list__row"><dt>Email</dt><dd>${PageUtils.escapeHtml(client.email || 'Не указано')}</dd></div>
-              <div class="ui-meta-list__row"><dt>Канал связи</dt><dd>${PageUtils.escapeHtml(client.preferredContactChannel || 'Не указано')}</dd></div>
-              <div class="ui-meta-list__row"><dt>Тип клиента</dt><dd>${PageUtils.escapeHtml(client.clientType)}</dd></div>
-              <div class="ui-meta-list__row"><dt>Создан</dt><dd>${PageUtils.formatDateTime(client.createdAt)}</dd></div>
-              <div class="ui-meta-list__row"><dt>Последняя активность</dt><dd>${PageUtils.formatDateTime(client.lastActivityAt)}</dd></div>
-            </dl>
+            <div class="ui-meta-list">
+              <div class="ui-meta-list__item"><span class="ui-meta-list__label">Телефон</span><span class="ui-meta-list__value${!client.phone ? ' ui-meta-list__value--muted' : ''}">${PageUtils.escapeHtml(client.phone || 'Не указано')}</span></div>
+              <div class="ui-meta-list__item"><span class="ui-meta-list__label">Email</span><span class="ui-meta-list__value${!client.email ? ' ui-meta-list__value--muted' : ''}">${PageUtils.escapeHtml(client.email || 'Не указано')}</span></div>
+              <div class="ui-meta-list__item"><span class="ui-meta-list__label">Канал связи</span><span class="ui-meta-list__value${!client.preferredContactChannel ? ' ui-meta-list__value--muted' : ''}">${PageUtils.escapeHtml(client.preferredContactChannel || 'Не указано')}</span></div>
+              <div class="ui-meta-list__item"><span class="ui-meta-list__label">Тип клиента</span><span class="ui-meta-list__value">${PageUtils.escapeHtml(client.clientType || 'Нет данных')}</span></div>
+              <div class="ui-meta-list__item"><span class="ui-meta-list__label">Создан</span><span class="ui-meta-list__value">${PageUtils.formatDateTime(client.createdAt)}</span></div>
+              <div class="ui-meta-list__item"><span class="ui-meta-list__label">Последняя активность</span><span class="ui-meta-list__value">${PageUtils.formatDateTime(client.lastActivityAt)}</span></div>
+            </div>
           </div>
         </div>
         <div class="ui-card">
